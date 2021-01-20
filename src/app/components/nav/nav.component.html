@@ -1,0 +1,49 @@
+<mat-sidenav-container class="sidenav-container">
+<!--  <mat-sidenav hidden #drawer class="sidenav" fixedInViewport-->
+<!--               [ngClass] = "{hidden: (isHandset$ | async) === false}"-->
+<!--               [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"-->
+<!--               [mode]="(isHandset$ | async) ? 'over' : 'side'"-->
+<!--               [opened]="(isHandset$ | async) === false">-->
+<!--    <mat-toolbar>iFulfill</mat-toolbar>-->
+
+
+<!--    <mat-nav-list>-->
+<!--      <a  mat-list-item> New Issue</a>-->
+<!--      <a  mat-list-item> My Remarks</a>-->
+<!--      <a  mat-list-item> Reports</a>-->
+<!--    </mat-nav-list>-->
+
+<!--  </mat-sidenav>-->
+  <mat-sidenav-content>
+
+    <mat-toolbar color="primary">
+<!--      <button-->
+<!--        type="button"-->
+<!--        aria-label="Toggle sidenav"-->
+<!--        mat-icon-button-->
+<!--        *ngIf="(isHandset$ | async) ">-->
+<!--        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>-->
+<!--      </button>-->
+      <!--      <span>Task App</span>-->
+
+      <span><img id="logo" src="/assets/LTI_Lets_solve_logo_white_png.png" alt="LTI"></span>
+      <span id="logo2">iFulfill</span>
+        <mat-icon style="margin-left: 210px; position: absolute">account_box</mat-icon>
+        <span id="user">Welcome, User Name!</span>
+
+
+<!--      <span><img id="logo2" src="/assets/LTI_Lets_solve_logo_white_png%202.png" alt="Lets Solve"></span>-->
+        <span class="spacer"></span>
+
+        <a  class="toolbar-lnk" mat-list-item> New Issue</a>
+        <a  class="toolbar-lnk" mat-list-item> My Remarks</a>
+        <a  class="toolbar-lnk" mat-list-item> Reports</a>
+
+<!--      <span class="spacer"></span>-->
+<!--      <li [ngClass] = "{hiddenLinks: (isHandset$ | async) === true}" class="est-time">{{ time | date: 'hh:mm:ss a' }} {{' EST'}}</li>-->
+      <button mat-raised-button [ngClass] = "{hiddenLinks: (isHandset$ | async) === true}" class="app-info"></button>
+    <ng-content></ng-content>
+    <!-- Add Content Here -->
+    </mat-toolbar>
+  </mat-sidenav-content>
+</mat-sidenav-container>

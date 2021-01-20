@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap');
+
+
+.sidenav-container {
+  height: fit-content;
+}
+
+.sidenav {
+  width: 200px;
+  /*display: none;*/
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+  overflow: hidden;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.hidden{
+  display: none;
+}
+
+.hiddenLinks{
+  display: none;
+}
+
+.spacer{
+  flex: 1 1 auto;
+}
+
+#logo{
+  margin-left: 10px;
+  position: absolute;
+  height: 70%;
+  top: 10px;
+}
+
+#logo2{
+  position: absolute;
+  margin-left: 100px;
+  height: 40%;
+  top: 20px;
+  font-family: Raleway, sans-serif;
+  font-weight: 900;
+  letter-spacing: 3px;
+  float: left;
+}
+
+#user{
+  position: absolute;
+  margin-left: 240px;
+  font-family: Raleway, sans-serif;
+  font-weight: 900;
+}
+
+li{
+  list-style: none;
+  padding: 10px;
+}
+
+.toolbar-lnk{
+  display: inline-block;
+  font-family: Raleway, sans-serif;
+  font-weight: bolder;
+  margin: 0 10px;
+}
+
+@media (max-width: 800px){
+  .toolbar-lnk{
+    display:none;
+  }
+
+}
+
+

@@ -1,0 +1,22 @@
+
+mat-toolbar{
+  margin-top: 50px;
+  width: 95%;
+  height: 80px;
+  border-radius: 2px;
+}
+table {
+  width: 95%;
+}
+
+.spacer{
+  flex: 1 1 auto;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
+
+.search-lbl{
+  font-size: 16px;
+}
