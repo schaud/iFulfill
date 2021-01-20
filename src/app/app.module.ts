@@ -19,6 +19,10 @@ import {MatSortModule} from '@angular/material/sort';
 import { FiltersComponent } from './components/filters/filters.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInput, MatInputModule} from '@angular/material/input';
+import { NewIssueComponent } from './new-issue/new-issue.component';
+
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -27,7 +31,8 @@ import {MatInput, MatInputModule} from '@angular/material/input';
     HomeComponent,
     NavComponent,
     TableComponent,
-    FiltersComponent
+    FiltersComponent,
+    NewIssueComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +48,10 @@ import {MatInput, MatInputModule} from '@angular/material/input';
     MatTableModule,
     MatSortModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+
+    MatDatepickerModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
