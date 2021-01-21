@@ -124,5 +124,8 @@
       }
     }
   },
-  "defaultProject": "iFulfill"
+  "defaultProject": "iFulfill",
+  "cli": {
+    "analytics": false
+  }
 }
