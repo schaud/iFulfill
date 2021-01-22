@@ -95,7 +95,12 @@
           <strong style="margin-right: 5px; vertical-align: top">
             Description :</strong
           >
-          <textarea style="display: inline; clear: left" cols="100" rows="10">
+          <textarea
+            readonly="true"
+            style="display: inline; clear: left"
+            cols="100"
+            rows="10"
+          >
  {{ issue.description }}</textarea
           >
         </p>
@@ -104,9 +109,7 @@
           style="
             background-color: rgba(231, 230, 226, 0.555);
 
-
-
-            border:rgb(133, 130, 130, 0.322) 1px solid;
+            border: rgb(133, 130, 130, 0.322) 1px solid;
           "
         >
           <strong
@@ -125,7 +128,8 @@
               name="remarklst "
               *ngFor="let r of getIssueRemarks(issue.id)"
             >
-              {{ r.remark }}
+              <img src="/assets/person-circle-outline.svg" [alt]="issue.reporter_id" />
+            <small>{{r.created_at}} </small>  <span> {{ r.remark }}</span>
             </li>
           </ul>
         </div>
