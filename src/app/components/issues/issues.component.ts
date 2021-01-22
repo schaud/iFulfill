@@ -5,6 +5,7 @@ import {
   HostListener,
   ViewChild,
   AfterViewInit,
+  ViewEncapsulation,
 } from '@angular/core';
 // import { ApiServiceService} from '../../services/api-service.service';
 // import * as moment from 'moment';
@@ -27,6 +28,7 @@ import { EditIssuesComponent } from '../edit-issues/edit-issues.component';
   selector: 'app-issues',
   templateUrl: './issues.component.html',
   styleUrls: ['./issues.component.css'],
+  // encapsulation: ViewEncapsulation.None,
 })
 export class IssuesComponent implements OnInit, AfterViewInit {
   obs: Observable<any>;
@@ -50,22 +52,36 @@ export class IssuesComponent implements OnInit, AfterViewInit {
   currentItemsToShow = [];
   currentItemsToShowName = [];
   currentItemsToShowDate = [];
-  pageSize = 4; // number of Issues per page
-
-  // Stoday: boolean;
-  // Screate: boolean;
-  // Sdate: boolean;
-  // Sname: boolean;
+  pageSize = 2; // number of Issues per page
 
   scrHeight: any;
   scrWidth: any;
-
+  @HostListener('window:resize', ['$event'])
   sortedData: Issue[];
-  //   constructor(private apiservice: ApiServiceService, public dialog: MatDialog,
-  //     private auth: AuthorizationService, private data: DataService, private cdr: ChangeDetectorRef) {
-  // this.getScreenSize();
+  //Objects
+  usernames: User[] = Object.create(User);
+  task: Issue = Object.create(Issue);
+  newTaskReport: Issue = Object.create(Issue);
+  issues = [];
+  tasksByDate: Issue[] = new Array<Issue>();
+  tasksByName: Issue[] = new Array<Issue>();
+  remark: Remark = Object.create(Remark);
+  remarks: Remark[] = new Array<Remark>();
+  issueRemarks: Remark[] = new Array<Remark>();
+  //Variables: General and Application State
+  currentUser = localStorage.getItem('UserEmail');
+  selectedIssue: Issue = Object.create(Issue);
+  // momentDate = moment.utc().utcOffset(-5).format('YYYY-MM-DD');
+  name: string;
+  date: any;
 
-  // }
+  //Variables : Boolean flags
+  isChecked: boolean = false;
+  indeterminate = false;
+  totalSelected: number = 0;
+
+  showSpinner: boolean = false;
+
   constructor(public dialog: MatDialog, private cdr: ChangeDetectorRef) {
     this.getScreenSize();
 
@@ -75,7 +91,6 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  @HostListener('window:resize', ['$event'])
   getScreenSize(event?) {
     this.scrHeight = window.innerHeight;
     this.scrWidth = window.innerWidth;
@@ -85,66 +100,77 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.getCurrentDate();
     this.getIssues();
     this.getRemarks();
-    // this.data.sharedToday.subscribe((Stoday) => (this.Stoday = Stoday));
-    // this.data.sharedCreate.subscribe((Screate) => (this.Screate = Screate));
-    // this.data.sharedDate.subscribe((Sdate) => (this.Sdate = Sdate));
-    // this.data.sharedName.subscribe((Sname) => (this.Sname = Sname));
 
     this.dataSource = new MatTableDataSource<Issue>(this.issues);
-    // this.dataSource.sort = this.sort;
+    this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     this.obs = this.dataSource.connect();
 
     this.dataSourceName = new MatTableDataSource<Issue>(this.tasksByName);
     this.dataSourceName.paginator = this.paginatorNameAdmin;
-    // if (this.isAdmin) {
-    //   this.dataSourceName.paginator = this.paginatorNameAdmin;
-    // }
-    // if (!this.isAdmin) {
-    //   this.dataSourceName.paginator = this.paginatorName;
-    // }
+
     this.obsName = this.dataSourceName.connect();
     this.cdr.detectChanges();
   }
 
-  //Objects
-  usernames: User[] = Object.create(User);
-  task: Issue = Object.create(Issue);
-  newTaskReport: Issue = Object.create(Issue);
-  issues: Issue[] = new Array<Issue>();
-  tasksByDate: Issue[] = new Array<Issue>();
-  tasksByName: Issue[] = new Array<Issue>();
-  remark: Remark = Object.create(Remark);
-  remarks: Remark[] = new Array<Remark>();
-  issueRemarks: Remark[] = new Array<Remark>();
-  //Variables: General and Application State
-  currentUser = localStorage.getItem('UserEmail');
-  selectedTask: Issue = Object.create(Issue);
-  // momentDate = moment.utc().utcOffset(-5).format('YYYY-MM-DD');
-  name: string;
-  date: any;
-
-  id: number;
-  subTaskName: string;
-  subTaskDetails: string;
-  subTaskProgress: string;
-  subTaskUserId: string;
-
-  //Variables : Boolean flags
-
-  isAllSelected: boolean = false;
-  indeterminate = false;
-  showSpinner: boolean = false;
-  complete: boolean = false;
-  checked: boolean = false;
-
   //Utility functions
   selectAll(e) {
-    this.isAllSelected = e.checked;
-    console.log('selectAll', this.isAllSelected, e.checked);
+    if (this.issues) {
+      this.currentItemsToShow.map((item) => {
+        item.checked = e.checked;
+        item.expanded = false;
+      });
+    }
+    // Array.prototype.forEach.call(this.issues, item => {
+    //   item.checked = e.checked;
+    // });
+    // if (this.currentItemsToShow) {
+    //   this.currentItemsToShow.map((item: any) => {
+    //     item.checked = e.checked;
+    //     item.expanded = false;
+    //   });
+    // }
+    console.log('selectAll', this.currentItemsToShow, e.checked);
   }
-  selectItem(e) {
-    if (e.value) this.checked = !this.checked;
+  expandItem(item) {
+    this.issues.map((listItem: any) => {
+      if (item == listItem) {
+        listItem.expanded = !listItem.expanded;
+      } else {
+        listItem.expanded = false;
+      }
+
+      // if (!listItem) {
+      //   this.rendr.setAttribute(
+      //     this.lstTasks.nativeElement,
+      //     "detailIcon",
+      //     "chevron-down-outline"
+      //   );
+      // }
+      return listItem;
+    });
+  }
+  selectItem(e, i) {
+    // if (this.currentItemsToShow) {
+    //   this.currentItemsToShow.indexOf[i].checked = e.checked;
+    // }
+    this.currentItemsToShow[i].checked = e.checked;
+    this.handleSelectAllCheckbox();
+    // console.log('selectItems',  this.totalSelected, this.currentItemsToShow);
+    // console.log('selectItem', this.currentItemsToShow, i, e.checked);
+  }
+  handleSelectAllCheckbox() {
+    this.totalSelected = this.currentItemsToShow.filter(
+      (d) => d.checked
+    ).length;
+
+    if (this.totalSelected <= 0) {
+      this.indeterminate = false;
+      this.isChecked = false;
+    } else if (this.totalSelected === this.currentItemsToShow.length) {
+      this.indeterminate = false;
+      this.isChecked = true;
+    } else this.indeterminate = true;
   }
   sortData(array) {
     return array.sort((a, b) => {
@@ -220,21 +246,24 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     obj.target_date = ' ';
     obj.system = 'ifulfill';
     this.issues.push(obj);
+
+    this.issues.map((item) => {
+      //Add isExpanded property to the subtask object
+      item.checked = false;
+      item.expanded = false;
+    });
     this.dataSource = new MatTableDataSource<Issue>(this.issues);
     this.dataSource.paginator = this.paginator;
     this.currentItemsToShow = this.issues.slice(0, this.pageSize);
-    // this.sortIssues(this.sort, this.issues);
-    this.complete = true;
-
     this.showSpinner = false;
     return this.issues;
   }
-  getIssueby(id) {
+  getIssueby(id): any {
     let obj = this.issues.find((i) => i.id === id);
     console.log(obj);
     return obj;
   }
-  getIssueRemarks(id): Remark[] {
+  getIssueRemarks(id): any[] {
     let obj: Remark[] = this.remarks.filter((r) => r.issue_id === id);
 
     // let obj = this.remarks.filter((el) => {
@@ -310,6 +339,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       $event.pageIndex * $event.pageSize,
       $event.pageIndex * $event.pageSize + $event.pageSize
     );
+    this.handleSelectAllCheckbox();
   }
 
   async onPageChangeName($event) {
@@ -318,6 +348,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       $event.pageIndex * $event.pageSize,
       $event.pageIndex * $event.pageSize + $event.pageSize
     );
+    this.handleSelectAllCheckbox();
   }
 
   async onPageChangeDate($event) {
@@ -326,6 +357,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       $event.pageIndex * $event.pageSize,
       $event.pageIndex * $event.pageSize + $event.pageSize
     );
+    this.handleSelectAllCheckbox();
   }
 
   sortIssues(sort: Sort, taskArray: Issue[]) {
@@ -353,10 +385,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       }
     });
     this.currentItemsToShow = this.sortedData.slice(0, this.pageSize);
-  }
-  hover() {
-    console.log('hover');
-    return;
+    this.handleSelectAllCheckbox();
   }
 
   openDialog() {
@@ -368,7 +397,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     let close: boolean;
     let dialogRef = this.dialog.open(EditIssuesComponent, {
       data: {
-        name: this.selectedTask.id,
+        name: this.selectedIssue.id,
       },
     });
 
@@ -378,16 +407,16 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       close = result.data == true;
       // console.log('dialog vals')
       // console.log(dialogVals)
-      this.subTaskProgress = dialogVals.progress;
-      this.subTaskDetails = dialogVals.details;
-      this.subTaskName = dialogVals.subtask;
+      // this.subTaskProgress = dialogVals.progress;
+      // this.subTaskDetails = dialogVals.details;
+      // this.subTaskName = dialogVals.subtask;
       // this.subTaskUserId = await this.getIdFromEmail(this.currentUser);
     });
 
     if (close) {
-      this.subTaskProgress = undefined;
-      this.subTaskName = undefined;
-      this.subTaskDetails = undefined;
+      // this.subTaskProgress = undefined;
+      // this.subTaskName = undefined;
+      // this.subTaskDetails = undefined;
     }
 
     dialogRef.afterClosed().subscribe(() => {
@@ -403,18 +432,18 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      this.getIssueRemarks(this.selectedTask.id);
+      this.getIssueRemarks(this.selectedIssue.id);
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      this.getIssueRemarks(this.selectedTask.id);
+      this.getIssueRemarks(this.selectedIssue.id);
     });
   }
 
   async openTasksDialog() {
     let taskDetails;
     let dialogRef = this.dialog.open(EditIssuesComponent, {
-      data: { task: this.selectedTask },
+      data: { task: this.selectedIssue },
       height: '700px',
     });
     dialogRef.afterClosed().subscribe((result) => {
