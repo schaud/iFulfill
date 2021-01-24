@@ -3,16 +3,22 @@
     <mat-spinner color="accent"></mat-spinner>
   </div>
 
-  <mat-accordion displayMode="flat" class="mat-table" name="pnlIssues">
+  <mat-accordion
+    displayMode="flat"
+    class="mat-table"
+    name="pnlIssues"
+    (click)="$event.stopPropagation()"
+    (enter)="$event.stopPropagation()"
+  >
     <section>
-      <div style="width: 100%; height: 40px; background-color: cornsilk ;padding: 10px;">
-        <button mat-raised-button color="primary">Edit Selectd Issues</button>
-        <button
-          mat-raised-button
-          color="primary"
-          style="position: absolute; right: 0px ;align-items: flex-end;margin-right: 10px;"
-        >
-          Open New Issue
+      <div id="dvFunctions">
+        <button mat-raised-button color="primary">
+          <mat-icon svgIcon="add_icon"></mat-icon>
+          <span>New Issue</span>
+        </button>
+        <button mat-raised-button color="primary">
+          <mat-icon svgIcon="edit_selected"></mat-icon>
+          <span>Edit Selected Issues </span>
         </button>
       </div>
     </section>
@@ -46,112 +52,114 @@
         >Reporter</span
       >
     </section>
-    <mat-expansion-panel
-      #pnlIssues
-      *ngFor="let issue of currentItemsToShow; let i = index"
-      (afterExpand)="selectedIssue = issue; expanded = true"
-    >
-      <mat-expansion-panel-header class="expansion-container">
-        <mat-panel-title class="expansion-child id">
-          <mat-checkbox
-            name="chkEdit"
-            (click)="$event.stopPropagation()"
-            (change)="selectItem($event, i)"
-            [checked]="issue.checked"
-          ></mat-checkbox>
-          {{ issue.id }}
-        </mat-panel-title>
-        <mat-panel-title class="expansion-child">
-          {{ issue.title }}
-        </mat-panel-title>
-        <mat-panel-title class="expansion-child">
-          {{ issue.reported_at }}
-        </mat-panel-title>
+    <ng-container>
+      <mat-expansion-panel
+        #pnlIssues
+        *ngFor="let issue of currentItemsToShow; let i = index"
+        (afterExpand)="selectedIssue = issue; expanded = true"
+      >
+        <mat-expansion-panel-header class="expansion-container">
+          <mat-panel-title class="expansion-child id">
+            <mat-checkbox
+              name="chkEdit"
+              (click)="$event.stopPropagation()"
+              (change)="selectItem($event, i)"
+              [checked]="issue.checked"
+            ></mat-checkbox>
+            {{ issue.id }}
+          </mat-panel-title>
+          <mat-panel-title class="expansion-child">
+            {{ issue.title }}
+          </mat-panel-title>
+          <mat-panel-title class="expansion-child">
+            {{ issue.reported_at }}
+          </mat-panel-title>
 
-        <mat-panel-title class="expansion-child">
-          {{ issue.status }}
-        </mat-panel-title>
-        <mat-panel-title class="expansion-child">
-          {{ issue.criticality }}
-        </mat-panel-title>
-        <mat-panel-title class="expansion-child">
-          {{ issue.reporter_id }}
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <div id="subdiv" style="background-color: rgba(229, 231, 231, 0.466)">
-        <div
-          style="
-            columns: 4;
-            width: 100%;
-            border: 1px rgba(189, 189, 189, 0.411) solid;
-          "
-        >
-          <div>
-            <strong> Pending With : </strong>
-            <span>{{ issue.pending_with }}</span>
-          </div>
-          <div>
-            <strong> Verified By :</strong> <span>{{ issue.verified_by }}</span>
-          </div>
-          <div>
-            <strong> Target Date :</strong>
-            <span>{{ issue.target_date }}</span>
-          </div>
-          <div>
-            <strong> Closure date :</strong>
-            <span>{{ issue.closure_date }}</span>
-          </div>
-        </div>
-
-        <br />
-        <p class="task-details">
-          <strong style="margin-right: 5px; vertical-align: top">
-            Description :</strong
-          >
-          <textarea
-            readonly="true"
-            style="display: inline; clear: left"
-            cols="100"
-            rows="10"
-          >
- {{ issue.description }}</textarea
-          >
-        </p>
-
-        <div
-          style="
-            background-color: rgba(231, 230, 226, 0.555);
-
-            border: rgb(133, 130, 130, 0.322) 1px solid;
-          "
-        >
-          <strong
+          <mat-panel-title class="expansion-child">
+            {{ issue.status }}
+          </mat-panel-title>
+          <mat-panel-title class="expansion-child">
+            {{ issue.criticality }}
+          </mat-panel-title>
+          <mat-panel-title class="expansion-child">
+            {{ issue.reporter_id }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div id="subdiv" style="background-color: rgba(229, 231, 231, 0.466)">
+          <div
             style="
-              display: block;
-              background-color: rgba(133, 130, 130, 0.322);
-              height: 20%;
+              columns: 4;
+              width: 100%;
+              border: 1px rgba(189, 189, 189, 0.411) solid;
             "
           >
-            Rmarks :</strong
-          >
+            <div>
+              <strong> Pending With : </strong>
+              <span>{{ issue.pending_with }}</span>
+            </div>
+            <div>
+              <strong> Verified By :</strong>
+              <span>{{ issue.verified_by }}</span>
+            </div>
+            <div>
+              <strong> Target Date :</strong>
+              <span>{{ issue.target_date }}</span>
+            </div>
+            <div>
+              <strong> Closure date :</strong>
+              <span>{{ issue.closure_date }}</span>
+            </div>
+          </div>
 
-          <ul name="dsd" *ngIf="expanded">
-            <li
-              #remarklst
-              name="remarklst "
-              *ngFor="let r of getIssueRemarks(issue.id)"
+          <br />
+          <p class="task-details">
+            <strong style="margin-right: 5px; vertical-align: top">
+              Description :</strong
             >
-              <span>
-                <img src="/assets/person-circle-outline.svg" [alt]="" />
-                <strong>{{ r.user_id }}</strong>
-              </span>
-              <small>{{ " on " + r.created_at }} </small>
-              <samp> {{ r.remark }}</samp>
-            </li>
-          </ul>
+            <textarea
+              readonly="true"
+              style="display: inline; clear: left"
+              cols="100"
+              rows="10"
+            >
+ {{ issue.description }}</textarea
+            >
+          </p>
+
+          <div
+            style="
+              background-color: rgba(231, 230, 226, 0.555);
+
+              border: rgb(133, 130, 130, 0.322) 1px solid;
+            "
+          >
+            <strong
+              style="
+                display: block;
+                background-color: rgba(133, 130, 130, 0.322);
+                height: 20%;
+              "
+            >
+              Rmarks :</strong
+            >
+
+            <ul>
+              <li
+                #remarklst
+                name="remarklst "
+                *ngFor="let r of getIssueRemarks(issue.id)"
+              >
+                <span>
+                  <img src="/assets/person-circle-outline.svg" [alt]="" />
+                  <strong>{{ r.user_id }}</strong>
+                </span>
+                <small>{{ " on " + r.created_at }} </small>
+                <samp> {{ r.remark }}</samp>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <!-- <button
+        <!-- <button
           style="margin-left: 25px"
           mat-raised-button
           color="primary"
@@ -167,7 +175,8 @@
         >
           Add a Subtask
         </button> -->
-    </mat-expansion-panel>
+      </mat-expansion-panel>
+    </ng-container>
   </mat-accordion>
   <p
     *ngIf="issues.length === 0"

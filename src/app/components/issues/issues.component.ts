@@ -18,16 +18,37 @@ import { Observable } from 'rxjs';
 // import {DataService} from '../../services/data.service';
 // import {SubtaskDetailsComponent} from '../dialog/subtask-details/subtask-details.component';
 import { MatSort, Sort } from '@angular/material/sort';
-
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material/icon';
 import { Issue } from '../../models/Issue';
 import { Remark } from '../../models/Remark';
 import { User } from '../../models/User';
 import { EditIssuesComponent } from '../edit-issues/edit-issues.component';
-
+const ADD_ICON = `
+<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Add Circle</title><path d='M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm80 224h-64v64a16 16 0 01-32 0v-64h-64a16 16 0 010-32h64v-64a16 16 0 0132 0v64h64a16 16 0 010 32z'/></svg>
+`;
+const EDIT_SELECTED = `<svg viewBox="0 0 64 64">
+<g id="list">
+  <path
+    d="M61,18.34A3.43,3.43,0,0,0,59.76,16l-1.91-1.6a3.48,3.48,0,0,0-4.9.43l-2.4,2.85L47,21.9V11.83a3,3,0,0,0-.88-2.12L39.29,2.88A3,3,0,0,0,37.17,2H6A3,3,0,0,0,3,5V59a3,3,0,0,0,3,3H44a3,3,0,0,0,3-3V37a.93.93,0,0,0-.07-.33L60.19,20.88A3.48,3.48,0,0,0,61,18.34ZM45,59a1,1,0,0,1-1,1H6a1,1,0,0,1-1-1V5A1,1,0,0,1,6,4H37v7a1,1,0,0,0,1,1h7V24a1,1,0,0,0,0,.23L32.2,39.54a.93.93,0,0,0-.2.38s0,0,0,0l-1.93,8.1a1,1,0,0,0,.33,1,1,1,0,0,0,.64.24,1.14,1.14,0,0,0,.4-.08l7.64-3.32h0a1,1,0,0,0,.36-.27L45,39ZM38.55,43.56l-4.18-3.5L51.44,19.71l4.18,3.51Z" />
+  <path d="M22,14H33a1,1,0,0,0,0-2H22a1,1,0,0,0,0,2Z" />
+  <path d="M21,26H39a1,1,0,0,0,0-2H21a1,1,0,0,0,0,2Z" />
+  <path d="M31,37a1,1,0,0,0-1-1H21a1,1,0,0,0,0,2h9A1,1,0,0,0,31,37Z" />
+  <path d="M17,33H11a1,1,0,0,0-1,1v6a1,1,0,0,0,1,1h6a1,1,0,0,0,1-1V34A1,1,0,0,0,17,33Zm-1,6H12V35h4Z" />
+  <path d="M27,48H21a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2Z" />
+  <path d="M17,45H11a1,1,0,0,0-1,1v6a1,1,0,0,0,1,1h6a1,1,0,0,0,1-1V46A1,1,0,0,0,17,45Zm-1,6H12V47h4Z" />
+  <path
+    d="M13.29,28.71A1,1,0,0,0,14,29h.16a1,1,0,0,0,.73-.54l3-6a1,1,0,1,0-1.78-.9l-2.38,4.76-2-2a1,1,0,0,0-1.42,1.42Z" />
+  <path
+    d="M13.29,16.71A1,1,0,0,0,14,17h.16a1,1,0,0,0,.73-.54l3-6a1,1,0,1,0-1.78-.9l-2.38,4.76-2-2a1,1,0,0,0-1.42,1.42Z" />
+</g>
+</svg>
+`;
 @Component({
   selector: 'app-issues',
   templateUrl: './issues.component.html',
   styleUrls: ['./issues.component.css'],
+
   // encapsulation: ViewEncapsulation.None,
 })
 export class IssuesComponent implements OnInit, AfterViewInit {
@@ -81,10 +102,21 @@ export class IssuesComponent implements OnInit, AfterViewInit {
   totalSelected: number = 0;
 
   showSpinner: boolean = false;
-
-  constructor(public dialog: MatDialog, private cdr: ChangeDetectorRef) {
+  constructor(
+    public dialog: MatDialog,
+    private cdr: ChangeDetectorRef,
+    iconRegistry: MatIconRegistry,
+    sanitizer: DomSanitizer
+  ) {
     this.getScreenSize();
-
+    iconRegistry.addSvgIconLiteral(
+      'add_icon',
+      sanitizer.bypassSecurityTrustHtml(ADD_ICON)
+    );
+    iconRegistry.addSvgIconLiteral(
+      'edit_selected',
+      sanitizer.bypassSecurityTrustHtml(EDIT_SELECTED)
+    );
     // this.sortedData = this.Issues.slice();
   }
   ngAfterViewInit() {
