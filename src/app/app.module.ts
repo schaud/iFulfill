@@ -19,11 +19,14 @@ import {MatSortModule} from '@angular/material/sort';
 import { FiltersComponent } from './components/filters/filters.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInput, MatInputModule} from '@angular/material/input';
-import { NewIssueComponent } from './new-issue/new-issue.component';
 
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormsModule } from '@angular/forms';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { IssueService } from './services/issue.service';
+import { NewIssuePopupComponent } from './components/dialogs/new-issue-popup/new-issue-popup.component';
+import {MatSelectModule} from '@angular/material/select';
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,7 @@ import { FormsModule } from '@angular/forms';
     NavComponent,
     TableComponent,
     FiltersComponent,
-    NewIssueComponent
+    NewIssuePopupComponent
   ],
   imports: [
     BrowserModule,
@@ -51,9 +54,13 @@ import { FormsModule } from '@angular/forms';
     MatInputModule,
 
     MatDatepickerModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    MatSelectModule,
+    MatNativeDateModule,
   ],
-  providers: [],
+  providers: [IssueService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
