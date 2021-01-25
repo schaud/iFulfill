@@ -16,7 +16,7 @@
           <mat-icon svgIcon="add_icon"></mat-icon>
           <span>New Issue</span>
         </button>
-        <button mat-raised-button color="primary">
+        <button mat-raised-button color="primary" (click)="openEditDialog()">
           <mat-icon svgIcon="edit_selected"></mat-icon>
           <span>Edit Selected Issues </span>
         </button>
@@ -29,7 +29,7 @@
       class="mat-elevation-z2 mat-header-row"
     >
       <mat-checkbox
-        class="checkboxheader"
+        class="headercheckbox"
         #chkAll
         id="chkAll"
         name="chkAll"
@@ -147,7 +147,7 @@
               <li
                 #remarklst
                 name="remarklst "
-                *ngFor="let r of getIssueRemarks(issue.id)"
+                *ngFor="let r of issue.remarks"
               >
                 <span>
                   <img src="/assets/person-circle-outline.svg" [alt]="" />

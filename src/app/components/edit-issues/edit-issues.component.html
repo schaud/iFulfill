@@ -1,1 +1,212 @@
-<p>edit-issues works!</p>
+<!-- <div
+  style="
+    width: 100%;
+    height: 40px;
+    background-color: black;
+    position: sticky;
+    top: 0px;
+  "
+> -->
+
+<!-- <div mat-dialog-title class="flex-container">
+  <button mat-button class="close-icon" [mat-dialog-close]="true">
+    <mat-icon>close</mat-icon>
+  </button>
+</div> -->
+
+<div   style="height: 100% !important ">
+  <!-- </div>
+
+<div mat-dialog-content id=" my-dialog ">
+<button class="close" mat-button mat-dialog-title (click)="close()">X</button> -->
+  <!-- </div>
+
+  <input type="button" (click)="close()" value="close" />
+</div>
+<div class="container"> -->
+  <div *ngIf="showSpinner" class="spinner-container">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+
+  <mat-accordion
+    displayMode="flat"
+    class="mat-table"
+    name="pnlIssues"
+    (click)="$event.stopPropagation()"
+    (enter)="$event.stopPropagation()"
+    style="height: 100% !important"
+  >
+    <section>
+      <div id="dvFunctions">
+        <button mat-raised-button color="primary">
+          <mat-icon svgIcon="save_all"></mat-icon>
+          <span>Save</span>
+        </button>
+
+        <button mat-raised-button color="primary">
+          <mat-icon svgIcon="save_close"></mat-icon>
+          <span>Save & Close</span>
+        </button>
+
+        <!-- <button
+          mat-raised-button
+
+
+
+        > -->
+          <mat-icon id="btnclose" svgIcon="cancel" style="float: right;cursor:pointer;" color="primary"   [mat-dialog-close]="true"></mat-icon>
+          <!-- <span>Cancel</span>
+        </button> -->
+      </div>
+    </section>
+    <section
+      #issueSort
+      matSort
+      (matSortChange)="sortIssues($event, selectedIssues)"
+      class="mat-elevation-z2 mat-header-row"
+      style="margin-top: 28px !important"
+    >
+      <span class="mat-header-cell id" mat-sort-header="id">ID#</span>
+      <span class="mat-header-cell" mat-sort-header="title">Title</span>
+      <span class="mat-header-cell" mat-sort-header="reported_at"
+        >Reported Date</span
+      >
+
+      <span class="mat-header-cell" mat-sort-header="status">Status</span>
+      <span class="mat-header-cell" mat-sort-header="criticality"
+        >Criticality</span
+      >
+      <span class="mat-header-cell" mat-sort-header="reporter_id"
+        >Reporter</span
+      >
+    </section>
+    <ng-container style="height: 100% !important">
+      <mat-expansion-panel
+        #pnlIssues
+        *ngFor="let issue of selectedIssues; let i = index"
+        (afterExpand)="selectedIssue = issue; expanded = true"
+
+      >
+        <mat-expansion-panel-header class="expansion-container">
+          <mat-panel-title class="expansion-child id">
+            <mat-checkbox
+              name="chkEdit"
+              (click)="$event.stopPropagation()"
+              (change)="selectItem($event, i)"
+              [checked]="issue.checked"
+            ></mat-checkbox>
+            {{ issue.id }}
+          </mat-panel-title>
+          <mat-panel-title class="expansion-child">
+            {{ issue.title }}
+          </mat-panel-title>
+          <mat-panel-title class="expansion-child">
+            {{ issue.reported_at }}
+          </mat-panel-title>
+
+          <mat-panel-title class="expansion-child">
+            {{ issue.status }}
+          </mat-panel-title>
+          <mat-panel-title class="expansion-child">
+            {{ issue.criticality }}
+          </mat-panel-title>
+          <mat-panel-title class="expansion-child">
+            {{ issue.reporter_id }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div id="subdiv" style="background-color: rgba(229, 231, 231, 0.466)">
+          <div
+            style="
+              columns: 4;
+              width: 100%;
+              border: 1px rgba(189, 189, 189, 0.411) solid;
+            "
+          >
+            <div>
+              <strong> Pending With : </strong>
+              <span>{{ issue.pending_with }}</span>
+            </div>
+            <div>
+              <strong> Verified By :</strong>
+              <span>{{ issue.verified_by }}</span>
+            </div>
+            <div>
+              <strong> Target Date :</strong>
+              <span>{{ issue.target_date }}</span>
+            </div>
+            <div>
+              <strong> Closure date :</strong>
+              <span>{{ issue.closure_date }}</span>
+            </div>
+          </div>
+
+          <br />
+          <p class="task-details">
+            <strong style="margin-right: 5px; vertical-align: top">
+              Description :</strong
+            >
+            <textarea
+              readonly="true"
+              style="display: inline; clear: left"
+              cols="100"
+              rows="10"
+            >
+ {{ issue.description }}</textarea
+            >
+          </p>
+
+          <div
+            style="
+              background-color: rgba(231, 230, 226, 0.555);
+
+              border: rgb(133, 130, 130, 0.322) 1px solid;
+            "
+          >
+            <strong
+              style="
+                display: block;
+                background-color: rgba(133, 130, 130, 0.322);
+                height: 20%;
+              "
+            >
+              Rmarks :</strong
+            >
+
+            <ul>
+              <li #remarklst name="remarklst " *ngFor="let r of issue.remarks">
+                <span>
+                  <img src="/assets/person-circle-outline.svg" [alt]="" />
+                  <strong>{{ r.user_id }}</strong>
+                </span>
+                <small>{{ " on " + r.created_at }} </small>
+                <samp> {{ r.remark }}</samp>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- <button
+          style="margin-left: 25px"
+          mat-raised-button
+          color="primary"
+          (click)="openTasksDialog()"
+        >
+          View Subtasks
+        </button>
+        <button
+          style="margin-left: 25px"
+          mat-raised-button
+          color="primary"
+          (click)="openDialog()"
+        >
+          Add a Subtask
+        </button> -->
+      </mat-expansion-panel>
+    </ng-container>
+  </mat-accordion>
+  <p
+    *ngIf="selectedIssues.length === 0"
+    style="margin-left: auto; margin-right: auto; width: fit-content"
+  >
+    No issue have been Selected .
+  </p>
+</div>

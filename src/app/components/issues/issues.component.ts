@@ -52,27 +52,27 @@ const EDIT_SELECTED = `<svg viewBox="0 0 64 64">
   // encapsulation: ViewEncapsulation.None,
 })
 export class IssuesComponent implements OnInit, AfterViewInit {
-  obs: Observable<any>;
+  // obs: Observable<any>;
   dataSource: MatTableDataSource<Issue>;
   @ViewChild('issueSort') issueSort: MatSort;
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  obsName: Observable<any>;
+  // obsName: Observable<any>;
   dataSourceName: MatTableDataSource<Issue>;
-  @ViewChild('nameSort') nameSort: MatSort;
-  @ViewChild('paginatorName') paginatorName: MatPaginator;
+  // @ViewChild('nameSort') nameSort: MatSort;
+  // @ViewChild('paginatorName') paginatorName: MatPaginator;
 
-  @ViewChild('nameSortAdmin') nameSortAdmin: MatSort;
-  @ViewChild('paginatorNameAdmin') paginatorNameAdmin: MatPaginator;
+  // @ViewChild('nameSortAdmin') nameSortAdmin: MatSort;
+  // @ViewChild('paginatorNameAdmin') paginatorNameAdmin: MatPaginator;
 
-  obsDate: Observable<any>;
-  dataSourceDate: MatTableDataSource<Issue>;
-  @ViewChild('dateSort') dateSort: MatSort;
-  @ViewChild('paginatorDate') paginatorDate: MatPaginator;
+  // obsDate: Observable<any>;
+  // dataSourceDate: MatTableDataSource<Issue>;
+  // @ViewChild('dateSort') dateSort: MatSort;
+  // @ViewChild('paginatorDate') paginatorDate: MatPaginator;
 
   currentItemsToShow = [];
-  currentItemsToShowName = [];
-  currentItemsToShowDate = [];
+  // currentItemsToShowName = [];
+  // currentItemsToShowDate = [];
   pageSize = 2; // number of Issues per page
 
   scrHeight: any;
@@ -92,8 +92,9 @@ export class IssuesComponent implements OnInit, AfterViewInit {
   //Variables: General and Application State
   currentUser = localStorage.getItem('UserEmail');
   selectedIssue: Issue = Object.create(Issue);
+  selectedIssues = [];
   // momentDate = moment.utc().utcOffset(-5).format('YYYY-MM-DD');
-  name: string;
+  // name: string;
   date: any;
 
   //Variables : Boolean flags
@@ -118,6 +119,9 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       sanitizer.bypassSecurityTrustHtml(EDIT_SELECTED)
     );
     // this.sortedData = this.Issues.slice();
+    this.getCurrentDate();
+    this.getIssues();
+    this.getRemarks();
   }
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
@@ -129,19 +133,23 @@ export class IssuesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.getCurrentDate();
-    this.getIssues();
-    this.getRemarks();
+    if (this.issues) {
+      this.currentItemsToShow.map((item) => {
+        item.checked = false;
+        item.expanded = false;
+        item.remarks = this.getIssueRemarks(item.id);
+      });
+    }
 
     this.dataSource = new MatTableDataSource<Issue>(this.issues);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-    this.obs = this.dataSource.connect();
+    // this.obs = this.dataSource.connect();
 
-    this.dataSourceName = new MatTableDataSource<Issue>(this.tasksByName);
-    this.dataSourceName.paginator = this.paginatorNameAdmin;
+    // this.dataSourceName = new MatTableDataSource<Issue>(this.tasksByName);
+    // this.dataSourceName.paginator = this.paginatorNameAdmin;
 
-    this.obsName = this.dataSourceName.connect();
+    // this.obsName = this.dataSourceName.connect();
     this.cdr.detectChanges();
   }
 
@@ -150,7 +158,6 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     if (this.issues) {
       this.currentItemsToShow.map((item) => {
         item.checked = e.checked;
-        item.expanded = false;
       });
     }
     // Array.prototype.forEach.call(this.issues, item => {
@@ -164,24 +171,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     // }
     console.log('selectAll', this.currentItemsToShow, e.checked);
   }
-  expandItem(item) {
-    this.issues.map((listItem: any) => {
-      if (item == listItem) {
-        listItem.expanded = !listItem.expanded;
-      } else {
-        listItem.expanded = false;
-      }
 
-      // if (!listItem) {
-      //   this.rendr.setAttribute(
-      //     this.lstTasks.nativeElement,
-      //     "detailIcon",
-      //     "chevron-down-outline"
-      //   );
-      // }
-      return listItem;
-    });
-  }
   selectItem(e, i) {
     // if (this.currentItemsToShow) {
     //   this.currentItemsToShow.indexOf[i].checked = e.checked;
@@ -204,11 +194,11 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       this.isChecked = true;
     } else this.indeterminate = true;
   }
-  sortData(array) {
-    return array.sort((a, b) => {
-      return <any>new Date(b.taskdate) - <any>new Date(a.taskdate);
-    });
-  }
+  // sortData(array) {
+  //   return array.sort((a, b) => {
+  //     return <any>new Date(b.taskdate) - <any>new Date(a.taskdate);
+  //   });
+  // }
 
   validatePercent(percentage) {
     // return percentage.match(/^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?%)$/) != null;
@@ -374,23 +364,23 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.handleSelectAllCheckbox();
   }
 
-  async onPageChangeName($event) {
-    this.currentItemsToShowName = this.tasksByName;
-    this.currentItemsToShowName = this.tasksByName.slice(
-      $event.pageIndex * $event.pageSize,
-      $event.pageIndex * $event.pageSize + $event.pageSize
-    );
-    this.handleSelectAllCheckbox();
-  }
+  // async onPageChangeName($event) {
+  //   this.currentItemsToShowName = this.tasksByName;
+  //   this.currentItemsToShowName = this.tasksByName.slice(
+  //     $event.pageIndex * $event.pageSize,
+  //     $event.pageIndex * $event.pageSize + $event.pageSize
+  //   );
+  //   this.handleSelectAllCheckbox();
+  // }
 
-  async onPageChangeDate($event) {
-    this.currentItemsToShowDate = this.tasksByDate;
-    this.currentItemsToShowDate = this.tasksByDate.slice(
-      $event.pageIndex * $event.pageSize,
-      $event.pageIndex * $event.pageSize + $event.pageSize
-    );
-    this.handleSelectAllCheckbox();
-  }
+  // async onPageChangeDate($event) {
+  //   this.currentItemsToShowDate = this.tasksByDate;
+  //   this.currentItemsToShowDate = this.tasksByDate.slice(
+  //     $event.pageIndex * $event.pageSize,
+  //     $event.pageIndex * $event.pageSize + $event.pageSize
+  //   );
+  //   this.handleSelectAllCheckbox();
+  // }
 
   sortIssues(sort: Sort, taskArray: Issue[]) {
     const data = taskArray.slice();
@@ -419,69 +409,32 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.currentItemsToShow = this.sortedData.slice(0, this.pageSize);
     this.handleSelectAllCheckbox();
   }
-
-  openDialog() {
-    let dialogVals: any = {
-      subtask: 'holder',
-      progress: 'holder',
-      details: 'holder',
-    };
-    let close: boolean;
-    let dialogRef = this.dialog.open(EditIssuesComponent, {
-      data: {
-        name: this.selectedIssue.id,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(async (result) => {
-      // console.log(`Dialog result: ${result.data}`);
-      dialogVals = result.data;
-      close = result.data == true;
-      // console.log('dialog vals')
-      // console.log(dialogVals)
-      // this.subTaskProgress = dialogVals.progress;
-      // this.subTaskDetails = dialogVals.details;
-      // this.subTaskName = dialogVals.subtask;
-      // this.subTaskUserId = await this.getIdFromEmail(this.currentUser);
-    });
-
-    if (close) {
-      // this.subTaskProgress = undefined;
-      // this.subTaskName = undefined;
-      // this.subTaskDetails = undefined;
-    }
-
-    dialogRef.afterClosed().subscribe(() => {
-      //  this.createSubTask();
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      // this.updateTask();
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.getIssues();
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.getIssueRemarks(this.selectedIssue.id);
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.getIssueRemarks(this.selectedIssue.id);
-    });
-  }
-
-  async openTasksDialog() {
+  async openEditDialog() {
     let taskDetails;
+
+    let selected = this.issues.filter((x) => x.checked == true);
+    // let xxx = this.selectedIssues.map((ix) => {
+    //   ix.remarks = this.getIssueRemarks(ix.id);
+    // });
+
     let dialogRef = this.dialog.open(EditIssuesComponent, {
-      data: { task: this.selectedIssue },
-      height: '700px',
+      data: { selectedIssues: selected },
+      height: '100%',
+      width: '100%',
+
+      disableClose:true,
+
     });
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog Tasks: ${result.data}`);
-      taskDetails = result.data;
+      //taskDetails = result.data.selected;
     });
+    return taskDetails;
+  }
+
+  async openNewDialog() {
+    let taskDetails;
+
     return taskDetails;
   }
   getCurrentDate() {
