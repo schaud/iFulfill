@@ -35,6 +35,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { CommonService } from './services/common.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -90,7 +91,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatSnackBarModule,
     MatButtonModule,
   ],
-  providers: [],
+  providers: [CommonService],
   bootstrap: [AppComponent],
 
 })

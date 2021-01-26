@@ -6,6 +6,7 @@ import {
   ViewChild,
   AfterViewInit,
   ViewEncapsulation,
+  OnDestroy,
 } from '@angular/core';
 // import { ApiServiceService} from '../../services/api-service.service';
 // import * as moment from 'moment';
@@ -24,6 +25,9 @@ import { Issue } from '../../models/Issue';
 import { Remark } from '../../models/Remark';
 import { User } from '../../models/User';
 import { EditIssuesComponent } from '../edit-issues/edit-issues.component';
+import { enumSelector } from 'src/app/services/common.service';
+import { Criticality } from 'src/app/enums/criticality.enum';
+import { Status } from 'src/app/enums/status.enum';
 const ADD_ICON = `
 <svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Add Circle</title><path d='M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm80 224h-64v64a16 16 0 01-32 0v-64h-64a16 16 0 010-32h64v-64a16 16 0 0132 0v64h64a16 16 0 010 32z'/></svg>
 `;
@@ -51,28 +55,17 @@ const EDIT_SELECTED = `<svg viewBox="0 0 64 64">
 
   // encapsulation: ViewEncapsulation.None,
 })
-export class IssuesComponent implements OnInit, AfterViewInit {
+export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
   // obs: Observable<any>;
   dataSource: MatTableDataSource<Issue>;
   @ViewChild('issueSort') issueSort: MatSort;
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  // obsName: Observable<any>;
+
   dataSourceName: MatTableDataSource<Issue>;
-  // @ViewChild('nameSort') nameSort: MatSort;
-  // @ViewChild('paginatorName') paginatorName: MatPaginator;
-
-  // @ViewChild('nameSortAdmin') nameSortAdmin: MatSort;
-  // @ViewChild('paginatorNameAdmin') paginatorNameAdmin: MatPaginator;
-
-  // obsDate: Observable<any>;
-  // dataSourceDate: MatTableDataSource<Issue>;
-  // @ViewChild('dateSort') dateSort: MatSort;
-  // @ViewChild('paginatorDate') paginatorDate: MatPaginator;
 
   currentItemsToShow = [];
-  // currentItemsToShowName = [];
-  // currentItemsToShowDate = [];
+
   pageSize = 2; // number of Issues per page
 
   scrHeight: any;
@@ -93,16 +86,17 @@ export class IssuesComponent implements OnInit, AfterViewInit {
   currentUser = localStorage.getItem('UserEmail');
   selectedIssue: Issue = Object.create(Issue);
   selectedIssues = [];
-  // momentDate = moment.utc().utcOffset(-5).format('YYYY-MM-DD');
-  // name: string;
+
   date: any;
 
   //Variables : Boolean flags
   isChecked: boolean = false;
   indeterminate = false;
   totalSelected: number = 0;
-
   showSpinner: boolean = false;
+  criticality: any[] = enumSelector(Criticality);
+  status: any[] = enumSelector(Status);
+
   constructor(
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -123,6 +117,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.getIssues();
     this.getRemarks();
   }
+  ngOnDestroy(): void {}
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
   }
@@ -140,16 +135,9 @@ export class IssuesComponent implements OnInit, AfterViewInit {
         item.remarks = this.getIssueRemarks(item.id);
       });
     }
-
     this.dataSource = new MatTableDataSource<Issue>(this.issues);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-    // this.obs = this.dataSource.connect();
-
-    // this.dataSourceName = new MatTableDataSource<Issue>(this.tasksByName);
-    // this.dataSourceName.paginator = this.paginatorNameAdmin;
-
-    // this.obsName = this.dataSourceName.connect();
     this.cdr.detectChanges();
   }
 
@@ -160,26 +148,12 @@ export class IssuesComponent implements OnInit, AfterViewInit {
         item.checked = e.checked;
       });
     }
-    // Array.prototype.forEach.call(this.issues, item => {
-    //   item.checked = e.checked;
-    // });
-    // if (this.currentItemsToShow) {
-    //   this.currentItemsToShow.map((item: any) => {
-    //     item.checked = e.checked;
-    //     item.expanded = false;
-    //   });
-    // }
     console.log('selectAll', this.currentItemsToShow, e.checked);
   }
 
   selectItem(e, i) {
-    // if (this.currentItemsToShow) {
-    //   this.currentItemsToShow.indexOf[i].checked = e.checked;
-    // }
     this.currentItemsToShow[i].checked = e.checked;
     this.handleSelectAllCheckbox();
-    // console.log('selectItems',  this.totalSelected, this.currentItemsToShow);
-    // console.log('selectItem', this.currentItemsToShow, i, e.checked);
   }
   handleSelectAllCheckbox() {
     this.totalSelected = this.currentItemsToShow.filter(
@@ -194,40 +168,28 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       this.isChecked = true;
     } else this.indeterminate = true;
   }
-  // sortData(array) {
-  //   return array.sort((a, b) => {
-  //     return <any>new Date(b.taskdate) - <any>new Date(a.taskdate);
-  //   });
-  // }
 
   validatePercent(percentage) {
-    // return percentage.match(/^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?%)$/) != null;
-    // return percentage.match(/^[0-9][0-9]?$|^100$/) != null;
     return percentage.match(/^(100|[1-9]?[0-9])$/) != null;
   }
-
   convertDate(str) {
     let date = new Date(str),
       mnth = ('0' + (date.getMonth() + 1)).slice(-2),
       day = ('0' + date.getDate()).slice(-2);
     return [date.getFullYear(), mnth, day].join('-');
   }
-
-  //   console.log(convert("Thu Jun 09 2011 00:00:00 GMT+0530 (India Standard Time)"))
-  // //-> "2011-06-08"
-
   getIssues() {
     this.showSpinner = true;
     let obj = new Issue();
     obj.id = '11';
     obj.title = 'RM/ RPM approver name not reflecting correctly';
     obj.reported_at = '8/24/2020';
-    obj.criticality = 'Moderate';
+    obj.criticality = '2';
     obj.description = `RM/ RPM approver name not reflecting correctly for RPB associates
       (list contains names of central RMG team), selected approver from the list and
       communicated the same—mail communication attached. (Request for RPM approval)`;
     obj.pending_with = 'Satyen, Bala(Spire)';
-    obj.status = 'Open';
+    obj.status = '1';
     obj.closure_date = '';
     obj.reporter_id = 'Yuvasree ';
     obj.created_at = ' ';
@@ -239,10 +201,10 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     obj.id = '12';
     obj.title = 'ifulfill Session issues';
     obj.reported_at = '8/20/2020';
-    obj.criticality = 'very High';
+    obj.criticality = '4';
     obj.description = `ifulfill Session issues`;
     obj.pending_with = 'Yuvasree';
-    obj.status = 'Testing Completed Except 1 scenario';
+    obj.status = '6';
     obj.closure_date = '';
     obj.reporter_id = 'Wael';
     obj.created_at = ' ';
@@ -257,10 +219,10 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     obj.id = '24';
     obj.title = 'Resource is in A3 yet not able to fulfill RR';
     obj.reported_at = '8/22/2020';
-    obj.criticality = 'Low';
+    obj.criticality = '1';
     obj.description = `Resource is in A3 yet not able to fulfill RR`;
     obj.pending_with = 'Kiran,Satish';
-    obj.status = '4th Sept : Discussion in prg';
+    obj.status = '3';
     obj.closure_date = '';
     obj.reporter_id = 'Sharjeel ';
     obj.created_at = ' ';
@@ -344,6 +306,23 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     obj.user_id = 'Satish';
     obj.issue_id = '24';
     this.remarks.push(obj);
+
+    obj = new Remark();
+    obj.id = '56';
+    obj.created_at = '10/04/2020';
+    obj.remark = `Testing Completed Except 1 scenario`;
+    obj.remark_type = 'issue';
+    obj.user_id = 'Satish';
+    obj.issue_id = '12';
+    this.remarks.push(obj);
+    obj = new Remark();
+    obj.id = '57';
+    obj.created_at = '9/21/2020';
+    obj.remark = `4th Sept : Discussion in prg`;
+    obj.remark_type = 'issue';
+    obj.user_id = 'Satish';
+    obj.issue_id = '24';
+    this.remarks.push(obj);
     // this.showSpinner = true;
     // this.complete = false;
 
@@ -352,7 +331,16 @@ export class IssuesComponent implements OnInit, AfterViewInit {
 
     return this.remarks;
   }
-
+  resolveCriticality(val): string {
+    let obj = this.criticality.find((e) => e.value === val);
+    //  console.log('resolveCriticality obj ', obj);
+    return obj.title;
+  }
+  resolveStatus(val): string {
+    let obj = this.status.find((e) => e.value === val);
+    // console.log('resolveStatus obj ', obj);
+    return obj.title;
+  }
   // Angular Material Function: Used for creating Subtasks
 
   async onPageChange($event) {
@@ -363,24 +351,6 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     );
     this.handleSelectAllCheckbox();
   }
-
-  // async onPageChangeName($event) {
-  //   this.currentItemsToShowName = this.tasksByName;
-  //   this.currentItemsToShowName = this.tasksByName.slice(
-  //     $event.pageIndex * $event.pageSize,
-  //     $event.pageIndex * $event.pageSize + $event.pageSize
-  //   );
-  //   this.handleSelectAllCheckbox();
-  // }
-
-  // async onPageChangeDate($event) {
-  //   this.currentItemsToShowDate = this.tasksByDate;
-  //   this.currentItemsToShowDate = this.tasksByDate.slice(
-  //     $event.pageIndex * $event.pageSize,
-  //     $event.pageIndex * $event.pageSize + $event.pageSize
-  //   );
-  //   this.handleSelectAllCheckbox();
-  // }
 
   sortIssues(sort: Sort, taskArray: Issue[]) {
     const data = taskArray.slice();
@@ -409,27 +379,29 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.currentItemsToShow = this.sortedData.slice(0, this.pageSize);
     this.handleSelectAllCheckbox();
   }
+  getSelecetdIssues(): any[] {
+    return Array.from(this.issues.filter((x) => x.checked == true));
+  }
   async openEditDialog() {
-    let taskDetails;
-
-    let selected = this.issues.filter((x) => x.checked == true);
-    // let xxx = this.selectedIssues.map((ix) => {
-    //   ix.remarks = this.getIssueRemarks(ix.id);
-    // });
-
-    let dialogRef = this.dialog.open(EditIssuesComponent, {
-      data: { selectedIssues: selected },
+    //  let selected = JSON.parse(JSON.stringify(this.getSelecetdIssues()));
+    const dialogRef = this.dialog.open(EditIssuesComponent, {
+      data: {
+        selectedIssues: this.getSelecetdIssues(),
+      },
       height: '100%',
       width: '100%',
-
-      disableClose:true,
-
+      disableClose: true,
+      position: { bottom: '50px' },
     });
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog Tasks: ${result.data}`);
-      //taskDetails = result.data.selected;
+      //This code is to update the items in issue  array from the result array
+      this.issues = this.issues.map((item) => {
+        let item2 = result.find((i2) => i2.id === item.id);
+        return item2 ? { ...item, ...item2 } : item;
+      });
+      this.currentItemsToShow = this.issues.slice(0, this.pageSize);
+      console.log(`Dialog Tasks result`, result);
     });
-    return taskDetails;
   }
 
   async openNewDialog() {

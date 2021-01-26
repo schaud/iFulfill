@@ -14,7 +14,7 @@
   </button>
 </div> -->
 
-<div   style="height: 100% !important ">
+<div style="height: 100% !important">
   <!-- </div>
 
 <div mat-dialog-content id=" my-dialog ">
@@ -36,33 +36,44 @@
     (enter)="$event.stopPropagation()"
     style="height: 100% !important"
   >
-    <section>
+    <div>
       <div id="dvFunctions">
         <button mat-raised-button color="primary">
           <mat-icon svgIcon="save_all"></mat-icon>
           <span>Save</span>
         </button>
 
-        <button mat-raised-button color="primary">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onNoClick(2)"
+          cdkFocusInitial
+        >
           <mat-icon svgIcon="save_close"></mat-icon>
           <span>Save & Close</span>
         </button>
 
         <!-- <button
           mat-raised-button
-
-
-
+(click)="onNoClick()"
+ [mat-dialog-close]="true"
+      [mat-dialog-close]="local_data"   [mat-dialog-close]="data"
         > -->
-          <mat-icon id="btnclose" svgIcon="cancel" style="float: right;cursor:pointer;" color="primary"   [mat-dialog-close]="true"></mat-icon>
-          <!-- <span>Cancel</span>
+        <mat-icon
+          id="btnclose"
+          svgIcon="cancel"
+          style="float: right; cursor: pointer"
+          color="primary"
+          (click)="onNoClick(1)"
+        ></mat-icon>
+        <!-- <span>Cancel</span>
         </button> -->
       </div>
-    </section>
+    </div>
     <section
       #issueSort
       matSort
-      (matSortChange)="sortIssues($event, selectedIssues)"
+      (matSortChange)="sortIssues($event, local_data)"
       class="mat-elevation-z2 mat-header-row"
       style="margin-top: 28px !important"
     >
@@ -83,9 +94,8 @@
     <ng-container style="height: 100% !important">
       <mat-expansion-panel
         #pnlIssues
-        *ngFor="let issue of selectedIssues; let i = index"
+        *ngFor="let issue of local_data; let i = index"
         (afterExpand)="selectedIssue = issue; expanded = true"
-
       >
         <mat-expansion-panel-header class="expansion-container">
           <mat-panel-title class="expansion-child id">
@@ -105,10 +115,30 @@
           </mat-panel-title>
 
           <mat-panel-title class="expansion-child">
-            {{ issue.status }}
+            <mat-form-field (click)="$event.stopPropagation()">
+              <select
+                matNativeControl
+                name="select_status"
+                [(ngModel)]="issue.status"
+              >
+                <option *ngFor="let c of status" [value]="c.value">
+                  {{ c.title }}
+                </option>
+              </select>
+            </mat-form-field>
           </mat-panel-title>
           <mat-panel-title class="expansion-child">
-            {{ issue.criticality }}
+            <mat-form-field (click)="$event.stopPropagation()">
+              <select
+                matNativeControl
+                name="select_criticality"
+                [(ngModel)]="issue.criticality"
+              >
+                <option *ngFor="let c of criticality" [value]="c.value">
+                  {{ c.title }}
+                </option>
+              </select>
+            </mat-form-field>
           </mat-panel-title>
           <mat-panel-title class="expansion-child">
             {{ issue.reporter_id }}
@@ -204,7 +234,7 @@
     </ng-container>
   </mat-accordion>
   <p
-    *ngIf="selectedIssues.length === 0"
+    *ngIf="!local_data || local_data.length === 0"
     style="margin-left: auto; margin-right: auto; width: fit-content"
   >
     No issue have been Selected .

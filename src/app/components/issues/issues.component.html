@@ -76,10 +76,10 @@
           </mat-panel-title>
 
           <mat-panel-title class="expansion-child">
-            {{ issue.status }}
+            {{ resolveStatus(issue.status) }}
           </mat-panel-title>
           <mat-panel-title class="expansion-child">
-            {{ issue.criticality }}
+            {{ resolveCriticality(issue.criticality) }}
           </mat-panel-title>
           <mat-panel-title class="expansion-child">
             {{ issue.reporter_id }}
@@ -144,11 +144,7 @@
             >
 
             <ul>
-              <li
-                #remarklst
-                name="remarklst "
-                *ngFor="let r of issue.remarks"
-              >
+              <li #remarklst name="remarklst " *ngFor="let r of issue.remarks">
                 <span>
                   <img src="/assets/person-circle-outline.svg" [alt]="" />
                   <strong>{{ r.user_id }}</strong>
