@@ -6,14 +6,11 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+
 import { DomSanitizer } from '@angular/platform-browser';
 import { Criticality } from 'src/app/enums/criticality.enum';
 import { Status } from 'src/app/enums/status.enum';
@@ -25,6 +22,8 @@ const CANCEL = `<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox=
 const SVAE_CLOSE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
 <path style="line-height:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid; text-transform:none;block-progression:tb;isolation:auto;mix-blend-mode:normal" d="M 2.5917969 1 C 1.7147969 1 1 1.7147969 1 2.5917969 L 1 12.408203 C 1 13.285203 1.7147969 14 2.5917969 14 L 7.7617188 14 C 8.5704696 15.204592 9.94479 16 11.5 16 C 13.979359 16 16 13.979359 16 11.5 C 16 9.94479 15.204592 8.5704696 14 7.7617188 L 14 3.4746094 L 11.525391 1 L 2.5917969 1 z M 2.5917969 2 L 3 2 L 3 4.125 C 3 5.113249 3.7046225 6 4.6679688 6 L 9.3320312 6 C 10.295378 6 11 5.113249 11 4.125 L 11 2 L 11.111328 2 L 13 3.8886719 L 13 7.2753906 C 12.528582 7.1071101 12.028145 7 11.5 7 C 9.94479 7 8.5704696 7.795408 7.7617188 9 L 5.5 9 C 4.673 9 4 9.673 4 10.5 L 4 13 L 2.5917969 13 C 2.2657969 13 2 12.734203 2 12.408203 L 2 2.5917969 C 2 2.2657969 2.2657969 2 2.5917969 2 z M 4 2 L 7 2 L 7 4 L 9 4 L 9 2 L 10 2 L 10 4.125 C 10 4.654751 9.658685 5 9.3320312 5 L 4.6679688 5 C 4.341315 5 4 4.654751 4 4.125 L 4 2 z M 11.5 8 C 13.438919 8 15 9.5610811 15 11.5 C 15 13.438919 13.438919 15 11.5 15 C 9.5610811 15 8 13.438919 8 11.5 C 8 9.5610811 9.5610811 8 11.5 8 z M 13.001953 9.8613281 L 11.160156 11.703125 L 10.013672 10.556641 L 9.3066406 11.263672 L 11.160156 13.117188 L 13.708984 10.568359 L 13.001953 9.8613281 z M 5.5 10 L 7.2753906 10 C 7.1071101 10.471418 7 10.971855 7 11.5 C 7 12.028145 7.1071101 12.528582 7.2753906 13 L 5 13 L 5 10.5 C 5 10.224 5.225 10 5.5 10 z"   font-weight="400" font-family="sans-serif" white-space="normal" overflow="visible"/>
 </svg>`;
+const ADD = `<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Add Circle</title><path d='M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm80 224h-64v64a16 16 0 01-32 0v-64h-64a16 16 0 010-32h64v-64a16 16 0 0132 0v64h64a16 16 0 010 32z'/></svg>`;
+const SAVE = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Save</title><path d="M380.44 32H64a32 32 0 00-32 32v384a32 32 0 0032 32h384a32.09 32.09 0 0032-32V131.56zM112 176v-64h192v64zm223.91 179.76a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>`;
 @Component({
   selector: 'app-edit-issues',
   templateUrl: './edit-issues.component.html',
@@ -44,6 +43,9 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   public criticality: any[] = enumSelector(Criticality);
   public status: any[] = enumSelector(Status);
+  isSingleRemark: boolean = true;
+  indexExpanded: number = -1;
+  isNewMode = false;
   ////////////////////////////////////////////////////////
   constructor(
     public dialogRef: MatDialogRef<IssuesComponent>,
@@ -66,6 +68,14 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
     iconRegistry.addSvgIconLiteral(
       'save_close',
       sanitizer.bypassSecurityTrustHtml(SVAE_CLOSE)
+    );
+    iconRegistry.addSvgIconLiteral(
+      'add',
+      sanitizer.bypassSecurityTrustHtml(ADD)
+    );
+    iconRegistry.addSvgIconLiteral(
+      'save',
+      sanitizer.bypassSecurityTrustHtml(SAVE)
     );
   }
   /////////////////////////////////////////////////////////////
@@ -127,6 +137,20 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
           return 0;
       }
     });
+  }
+  showAddRemark(id) {
+    this.local_data.map((i) => {
+      i.id === id ? (i.expanded = true) : (i.expanded = false);
+    });
+    this.isNewMode = true;
+    console.log(`showAddRemark this.local_data ${id}`, this.local_data);
+  }
+  cancelAddRemark(id) {
+    this.local_data.find((i) => {
+      return i.id === id;
+    }).expanded = false;
+    this.isNewMode = false;
+    console.log(`cancelAddRemark this.local_data ${id}`, this.local_data);
   }
   selectItem(e, i) {
     this.local_data[i].checked = e.checked;

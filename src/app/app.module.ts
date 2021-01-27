@@ -32,7 +32,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatNativeDateModule } from '@angular/material/core';
+import {
+  ErrorStateMatcher,
+  MatNativeDateModule,
+  ShowOnDirtyErrorStateMatcher,
+} from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { CommonService } from './services/common.service';
@@ -91,8 +95,10 @@ import { CommonService } from './services/common.service';
     MatSnackBarModule,
     MatButtonModule,
   ],
-  providers: [CommonService],
+  providers: [
+    CommonService,
+    { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
+  ],
   bootstrap: [AppComponent],
-
 })
 export class AppModule {}
