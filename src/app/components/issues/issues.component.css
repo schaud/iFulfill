@@ -300,8 +300,6 @@ th.mat-sort-header-sorted {
   margin-left: 17px;
 }
 
-
-
 ul {
   list-style-type: none;
   background-color: rgba(253, 251, 251, 0.425);
@@ -330,8 +328,8 @@ li {
 
 li img {
   vertical-align: middle;
-  width: 44px;
-  height: 46px;
+  width: 38px;
+  height: 38px;
   display: inline-block;
   clear: left;
 }
@@ -352,15 +350,17 @@ li small {
 }
 
 li samp {
-  border: 1px solid gainsboro;
+  width: auto;
+  display: block;
   /* background-color: rgba(235, 244, 247, 0.904); */
   background-color: rgba(232, 243, 252, 0.76);
   padding-left: 10px;
   padding: 10px;
+  /*
   border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+  border-top-right-radius: 12px; */
   border-bottom-right-radius: 12px;
-  /* border-bottom-left-radius: -12px; */
+  border-bottom-left-radius: 12px;
 }
 
 li:last-child {
@@ -369,8 +369,16 @@ li:last-child {
 }
 
 strong {
-  color: rgb(0, 49, 209);
-  font: bolder;
+  color: rgb(0, 109, 233);
+  font-weight: bold;
+  font-family: sans-serif;
+  /* margin: auto;
+  vertical-align: middle; */
+}
+
+label {
+  font-weight: bolder;
+  font-family: sans-serif;
 }
 
 .mat-expansion-panel-header .mat-expanded {
@@ -408,10 +416,6 @@ strong {
   background: red;
 } */
 
-.mat-expansion-panel-header.mat-expanded, .mat-expansion-panel-header.mat-expanded:hover, .mat-expansion-panel-header.mat-expanded:focus {
-  background-color: rgba(48, 48, 46, 0.281);
-}
-
 #dvFunctions {
   display: inline-flex;
   vertical-align: middle !important;
@@ -430,17 +434,38 @@ strong {
   color: black;
 }
 
+
 mat-icon {
   width: 33px;
   height: 33px;
   margin: 4x;
   padding: 4px;
   margin-left: 0px !important;
-  padding-left:0px !important;
+  padding-left: 0px !important;
 }
- .my-dialog {
+
+.mat-checkbox {
+  margin: -1px 10px 0px 0px;
+}
+
+.headercheckbox /deep/ .mat-checkbox-frame {
+  border-color: gold
+}
+
+#btnclose:hover {
+  color: rgb(211, 31, 55);
+}
+
+.remarkArea{
+  width: 90%;
+   margin: 2px 3px 3px 6px;
+  border: 1px inset gainsboro;
+  background-color: white;
+
+}
+
+/* .cdk-overlay-pane.my-dialog {
   position: relative!important;
-  background-color: #3f51b5;
 }
 .close.mat-button {
   position: absolute;
@@ -450,13 +475,4 @@ mat-icon {
   line-height: 14px;
   min-width: auto;
 }
-
-.mat-checkbox {
-  margin: -1px 10px 0px 0px;
-}
-
-.headercheckbox  /deep/ .mat-checkbox-frame  {
-  border : gold 2px solid;
-  width: 16px;
-  margin: 0px 10px 0px -3px;
-}
+.flex-container { display: flex;} */

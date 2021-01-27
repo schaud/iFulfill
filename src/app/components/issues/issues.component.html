@@ -133,25 +133,122 @@
               border: rgb(133, 130, 130, 0.322) 1px solid;
             "
           >
-            <strong
+            <div
               style="
-                display: block;
-                background-color: rgba(133, 130, 130, 0.322);
-                height: 20%;
+                display: flexbox;
+                background-color: rgba(211, 220, 226, 0.842);
+                height: 33px;
+                vertical-align: middle;
+                padding-top: 4px !important;
               "
             >
-              Rmarks :</strong
-            >
+              <strong>Rmarks :</strong>
+              <mat-icon
+                *ngIf="!isNewMode"
+                id="btnclose"
+                svgIcon="add"
+                title="add"
+                style="
+                  float: right;
+                  padding: 0px !important ;
+                  cursor: pointer;
+                  color: rgb(6, 173, 78);
+                "
+                color="primary"
+                (click)="showAddRemark(issue.id)"
+              ></mat-icon>
 
-            <ul>
-              <li #remarklst name="remarklst " *ngFor="let r of issue.remarks">
-                <span>
-                  <img src="/assets/person-circle-outline.svg" [alt]="" />
-                  <strong>{{ r.user_id }}</strong>
-                </span>
-                <small>{{ " on " + r.created_at }} </small>
-                <samp> {{ r.remark }}</samp>
-              </li>
+              <mat-icon
+                *ngIf="isNewMode"
+                id="btnsaveRemark"
+                svgIcon="cancel"
+                title="Cancel"
+                style="
+                  float: right;
+                  width: 30px;
+                  height: 29px;
+                  padding: 0px !important ;
+                  cursor: pointer;
+                  color: rgb(192, 12, 57);
+                "
+                color="primary"
+                (click)="cancelAddRemark(issue.id)"
+              ></mat-icon>
+              <mat-icon
+                *ngIf="isNewMode"
+                id="btncancelRemark"
+                svgIcon="save"
+                title="Save"
+                style="
+                  float: right;
+                  width: 28px;
+                  height: 28px;
+                  padding: 0px !important ;
+                  cursor: pointer;
+                  color: rgba(26, 75, 167, 0.952);
+                  margin-right: 5px;
+                "
+                color="primary"
+                (click)="showAddRemark(issue.id)"
+              ></mat-icon>
+            </div>
+
+            <ul
+              name="ulRemarks"
+              style="padding: 0px !important ; left: 0px !important"
+            >
+              <div
+                style="
+                  display: table;
+                  padding: 0px !important ;
+                  left: 0px !important;
+                "
+                #remarklst
+                name="remarklst "
+                *ngFor="
+                  let r of issue.remarks;
+                  let i = index;
+                  first as isFirst;
+                  last as isLast
+                "
+              >
+                <li *ngIf="isFirst && issue.expanded && isNewMode">
+                  <form>
+                    <div>
+                      <img src="/assets/person-circle-outline.svg" [alt]="" />
+                      <strong
+                        style="
+                          font-family: sans-serif;
+                          font-weight: bolder;
+                          color: chocolate;
+                        "
+                        >You</strong
+                      >
+
+                      <small
+                        style="font-family: sans-serif; font-weight: bolder"
+                        >{{ " on " + r.created_at }}</small
+                      >
+
+                      <textarea
+                        class="remarkArea"
+                        name="txtremark"
+                        matInput
+                        placeholder="Type your remark here .."
+                      ></textarea>
+                    </div>
+                  </form>
+                </li>
+                <li>
+                  <span>
+                    <img src="/assets/person-circle-outline.svg" [alt]="" />
+                    <strong>{{ r.user_id }}</strong>
+                  </span>
+                  <small>{{ " on " + r.created_at }} </small>
+                  <br />
+                  <samp> {{ r.remark }}</samp>
+                </li>
+              </div>
             </ul>
           </div>
         </div>

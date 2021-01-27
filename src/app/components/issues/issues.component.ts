@@ -48,6 +48,9 @@ const EDIT_SELECTED = `<svg viewBox="0 0 64 64">
 </g>
 </svg>
 `;
+const ADD = `<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Add Circle</title><path d='M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm80 224h-64v64a16 16 0 01-32 0v-64h-64a16 16 0 010-32h64v-64a16 16 0 0132 0v64h64a16 16 0 010 32z'/></svg>`;
+const SAVE = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Save</title><path d="M380.44 32H64a32 32 0 00-32 32v384a32 32 0 0032 32h384a32.09 32.09 0 0032-32V131.56zM112 176v-64h192v64zm223.91 179.76a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>`;
+const CANCEL = `<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Close Circle</title><path d='M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm86.63 272L320 342.63l-64-64-64 64L169.37 320l64-64-64-64L192 169.37l64 64 64-64L342.63 192l-64 64z'/></svg>`;
 @Component({
   selector: 'app-issues',
   templateUrl: './issues.component.html',
@@ -96,7 +99,8 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
   showSpinner: boolean = false;
   criticality: any[] = enumSelector(Criticality);
   status: any[] = enumSelector(Status);
-
+  indexExpanded: number = -1;
+  isNewMode = false;
   constructor(
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -111,6 +115,17 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     iconRegistry.addSvgIconLiteral(
       'edit_selected',
       sanitizer.bypassSecurityTrustHtml(EDIT_SELECTED)
+    );
+    iconRegistry.addSvgIconLiteral(
+      'save',
+      sanitizer.bypassSecurityTrustHtml(SAVE)
+    );
+    iconRegistry.addSvgIconLiteral(
+      'cancel',
+      sanitizer.bypassSecurityTrustHtml(CANCEL)
+    );  iconRegistry.addSvgIconLiteral(
+      'add',
+      sanitizer.bypassSecurityTrustHtml(ADD)
     );
     // this.sortedData = this.Issues.slice();
     this.getCurrentDate();
@@ -342,7 +357,20 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     return obj.title;
   }
   // Angular Material Function: Used for creating Subtasks
-
+  showAddRemark(id) {
+    this.issues.map((i) => {
+      i.id === id ? (i.expanded = true) : (i.expanded = false);
+    });
+    this.isNewMode = true;
+    console.log(`showAddRemark this.local_data ${id}`, this.issues);
+  }
+  cancelAddRemark(id) {
+    this.issues.find((i) => {
+      return i.id === id;
+    }).expanded = false;
+    this.isNewMode = false;
+    console.log(`cancelAddRemark this.local_data ${id}`, this.issues);
+  }
   async onPageChange($event) {
     this.currentItemsToShow = this.issues;
     this.currentItemsToShow = this.issues.slice(
