@@ -67,7 +67,7 @@ li{
   display: inline-block;
   font-family: Raleway, sans-serif;
   font-weight: bolder;
-  margin: 0 10px;
+  margin: 0 10px;  color: #ffc400;
 }
 
 @media (max-width: 800px){

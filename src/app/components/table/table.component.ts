@@ -1,6 +1,8 @@
 import {OnInit, AfterViewInit, Component, ViewChild} from '@angular/core';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { NewIssuePopupComponent } from '../../components/dialogs/new-issue-popup/new-issue-popup.component';
 
 export interface Layout {
   id: number;
@@ -29,7 +31,7 @@ const ELEMENT_DATA: Layout[] = [
 })
 export class TableComponent implements OnInit, AfterViewInit {
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit(): void {
   }
@@ -43,6 +45,14 @@ export class TableComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
+  openNewIssue(): void {
+    let dialogRef = this.dialog.open(NewIssuePopupComponent, {
+
+      data: {
+
+      }
+    })
+  }
 
 
 }
