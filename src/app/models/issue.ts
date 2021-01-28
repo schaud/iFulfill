@@ -1,10 +1,9 @@
-export class Issue{
+export class Issue {
   id?: string;
   title?: string;
   description?: string;
   reported_at?: string;
   reported_by?: string;
-  created_at?: string;
   criticality?: string;
   verified_by?: string;
   target_date?: string;

@@ -1,5 +1,5 @@
 <h1 mat-dialog-title>New Issue</h1>
-<div class="container" [formGroup]="issueFormGroup">
+<form class="container" [formGroup]="issueFormGroup" action="submit">
   <mat-form-field appearance="fill">
     <mat-label>Issue Title</mat-label>
     <input matInput formControlName="title">
@@ -49,6 +49,6 @@
 
   <button mat-raised-button color="accent" type="submit" [disabled]="!issueFormGroup.valid" (click)="createIssue()">Submit</button>
   <button mat-stroked-button (click)="close()">Cancel</button>
-</div>
+</form>
 
 

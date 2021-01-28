@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import Issue from '../../../models/issue';
+import Issue from '../../../models/Issue';
 import { FormBuilder, Validators } from '@angular/forms';
 import { IssueService } from '../../../services/issue.service';
 
@@ -52,7 +52,6 @@ export class NewIssuePopupComponent implements OnInit {
 
     issue.target_date = this.issueFormGroup.value.target_date.toDateString();
 
-    issue.created_at = today.toDateString();
     issue.closure_date = today.toDateString();
     issue.verified_by = "AngularDummy";
     issue.system = "WINDOWS";
@@ -63,6 +62,8 @@ export class NewIssuePopupComponent implements OnInit {
     console.log(issue);
 
     console.log(this.issueService.createIssue(issue));
+
+    this.close();
   }
 
   dummyMethod(): void {
@@ -78,7 +79,6 @@ export class NewIssuePopupComponent implements OnInit {
     obj.status = 'Open';
     obj.closure_date = '';
     obj.reported_by = 'Yuvasree ';
-    obj.created_at = ' ';
     obj.verified_by = ' ';
     obj.target_date = ' ';
     obj.system = 'ifulfill';

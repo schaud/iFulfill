@@ -1,0 +1,393 @@
+<ng-container>
+  <div style="height: 100% !important">
+    <div *ngIf="showSpinner" class="spinner-container">
+      <mat-spinner color="accent"></mat-spinner>
+    </div>
+
+    <mat-accordion
+      displayMode="flat"
+      name="pnlIssues"
+      (click)="$event.stopPropagation()"
+      (enter)="$event.stopPropagation()"
+      style="height: 100% !important"
+    >
+      <div id="dvFunctions">
+        <button mat-raised-button color="primary">
+          <mat-icon svgIcon="save_all"></mat-icon>
+          <span>Save</span>
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onNoClick(2)"
+          cdkFocusInitial
+        >
+          <mat-icon svgIcon="save_close"></mat-icon>
+          <span>Save & Close</span>
+        </button>
+
+        <mat-icon
+          id="btnclose"
+          svgIcon="cancel"
+          style="float: right; cursor: pointer"
+          color="primary"
+          (click)="onNoClick(1)"
+        ></mat-icon>
+        <hr
+          style="padding: 0px !important; border: 1px solid black; margin: -1px"
+        />
+        <div id="divMutilRemark">
+          <form style="margin-left: 0px">
+            <div id="divActivateMultiRemark">
+              <mat-checkbox
+                id="chkActivateMultiRemark"
+                class="headercheckbox"
+                (change)="activateMultiRemark($event)"
+                ><strong id="MultiRemarkText"
+                  >Add One Remark for All Selected Issues
+                </strong>
+              </mat-checkbox>
+            </div>
+
+            <textarea
+              *ngIf="!isSingleRemark"
+              class="mlti remarkArea"
+              name="txtremark"
+              matInput
+              placeholder="Type your remark here .."
+            ></textarea>
+          </form>
+        </div>
+      </div>
+      <section
+        style="display: block; height: 100%; width: 100%"
+        [style.margin-top]="isSingleRemark ? '48px' : '122px'"
+      >
+        <section
+          #issueSort
+          matSort
+          (matSortChange)="sortIssues($event, local_data)"
+          class="mat-elevation-z2 mat-header-row"
+          style="margin-top: 2px !important"
+        >
+          <span
+            class="mat-header-cell"
+            mat-sort-header="id"
+            style="
+              text-align: start;
+              align-items: left;
+              max-width: 70px !important; ;
+            "
+            >ID#</span
+          >
+          <span
+            class="mat-header-cell"
+            mat-sort-header="title"
+            style="
+              text-align: start;
+              align-items: left;
+              min-width: 200px !important;
+            "
+          >
+            Title</span
+          >
+          <span
+            class="mat-header-cell"
+            mat-sort-header="reported_at"
+            style="
+              text-align: start;
+              align-items: left;
+              min-width: 120px !important;
+            "
+            >Reported Date</span
+          >
+
+          <span
+            class="mat-header-cell"
+            mat-sort-header="status"
+            style="
+              text-align: start;
+              align-items: left;
+              min-width: 120px !important;
+            "
+            >Status</span
+          >
+          <span
+            class="mat-header-cell"
+            mat-sort-header="criticality"
+            style="
+              text-align: start;
+              align-items: left;
+              min-width: 120px !important;
+            "
+            >Criticality</span
+          >
+          <span
+            class="mat-header-cell"
+            mat-sort-header="reporter_id"
+            style="
+              text-align: start;
+              align-items: left;
+              min-width: 120px !important;
+            "
+            >Reporter</span
+          >
+        </section>
+        <mat-expansion-panel
+          #pnlIssues
+          *ngFor="let issue of local_data; let i = index"
+          (afterExpand)="selectedIssue = issue"
+          (afterCollapse)="isNewMode = false; issue.expanded = false"
+        >
+          <mat-expansion-panel-header class="expansion-container">
+            <mat-panel-title
+              class="expansion-child"
+              style="
+                text-align: start;
+                align-items: left;
+                max-width: 70px !important;
+                vertical-align: top !important;
+              "
+            >
+              <mat-checkbox
+                name="chkEdit"
+                (click)="$event.stopPropagation()"
+                (change)="selectItem($event, i)"
+                [checked]="issue.checked"
+              ></mat-checkbox>
+              {{ issue.id }}
+            </mat-panel-title>
+            <mat-panel-title
+              class="expansion-child"
+              style="
+                text-align: start;
+                align-items: left;
+                min-width: 200px !important;
+                vertical-align: top !important; ;
+              "
+            >
+              {{ issue.title }}
+            </mat-panel-title>
+            <mat-panel-title
+              class="expansion-child"
+              style="
+                text-align: start;
+                align-items: left;
+                min-width: 120px !important;
+                vertical-align: top !important; ;
+              "
+            >
+              {{ issue.reported_at }}
+            </mat-panel-title>
+
+            <mat-panel-title
+              class="expansion-child"
+              style="
+                text-align: start;
+                align-items: left;
+                min-width: 120px !important;
+                vertical-align: top !important; ;
+              "
+            >
+              <mat-form-field
+                (click)="$event.stopPropagation()"
+                style="top: -15px !important"
+              >
+                <select
+                  matNativeControl
+                  name="select_status"
+                  [(ngModel)]="issue.status"
+                >
+                  <option *ngFor="let c of status" [value]="c.value">
+                    {{ c.title }}
+                  </option>
+                </select>
+              </mat-form-field>
+            </mat-panel-title>
+            <mat-panel-title
+              class="expansion-child"
+              style="
+                text-align: start;
+                align-items: left;
+                min-width: 120px !important;
+                vertical-align: top !important;
+                top: 0px !important ;
+              "
+            >
+              <mat-form-field
+                (click)="$event.stopPropagation()"
+                style="top: -15px !important"
+              >
+                <select
+                  matNativeControl
+                  name="select_criticality"
+                  [(ngModel)]="issue.criticality"
+                >
+                  <option *ngFor="let c of criticality" [value]="c.value">
+                    {{ c.title }}
+                  </option>
+                </select>
+              </mat-form-field>
+            </mat-panel-title>
+            <mat-panel-title
+              class="expansion-child"
+              style="
+                text-align: left;
+                align-items: left;
+                min-width: 120px !important;
+                vertical-align: top !important;
+                top: 0px !important;
+              "
+            >
+              {{ issue.reporter_id }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div id="subdiv" style="background-color: rgba(229, 231, 231, 0.466)">
+            <div
+              style="
+                columns: 4;
+                width: 100%;
+                border: 1px rgba(189, 189, 189, 0.411) solid;
+              "
+            >
+              <div style="border-left: 1px solid rgb(218, 218, 218)">
+                <label> Pending With : </label>
+                <span>{{ issue.pending_with }}</span>
+              </div>
+              <div style="border-left: 1px solid rgb(218, 218, 218)">
+                <label> Verified By :</label>
+                <span>{{ issue.verified_by }}</span>
+              </div>
+              <div style="border-left: 1px solid rgb(218, 218, 218)">
+                <label> Target Date :</label>
+                <span>{{ issue.target_date }}</span>
+              </div>
+              <div style="border-left: 1px solid rgb(218, 218, 218)">
+                <label> Closure Date :</label>
+                <span>{{ issue.closure_date }}</span>
+              </div>
+            </div>
+
+            <br />
+            <p class="task-details">
+              <label style="margin-right: 5px; vertical-align: top">
+                Description :</label
+              >
+              <textarea
+                readonly="true"
+                style="display: inline; clear: left"
+                cols="100"
+                rows="6"
+              >
+ {{ issue.description }}</textarea
+              >
+            </p>
+
+            <div
+              style="
+                background-color: rgba(231, 230, 226, 0.555);
+
+                border: rgb(133, 130, 130, 0.322) 1px solid;
+              "
+            >
+              <div id="remarkButtons">
+                <strong>Rmarks :</strong>
+                <mat-icon
+                  *ngIf="isSingleRemark && !isNewMode"
+                  id="btnAddRemark"
+                  svgIcon="add"
+                  title="add"
+                  (click)="showAddRemark(issue.id)"
+                ></mat-icon>
+
+                <mat-icon
+                  *ngIf="isSingleRemark && isNewMode"
+                  id="btnCancelRemark"
+                  svgIcon="cancel"
+                  title="Cancel"
+                  (click)="cancelAddRemark(issue.id)"
+                ></mat-icon>
+                <mat-icon
+                  *ngIf="isSingleRemark && isNewMode"
+                  id="btnSaveRemark"
+                  svgIcon="save"
+                  title="Save"
+                  (click)="showAddRemark(issue.id)"
+                ></mat-icon>
+              </div>
+
+              <ul
+                name="ulRemarks"
+                style="padding: 0px !important ; left: 0px !important"
+              >
+                <div
+                  style="
+                    display: table;
+                    padding: 0px !important ;
+                    left: 0px !important;
+                  "
+                  #remarklst
+                  name="remarklst "
+                  *ngFor="
+                    let r of issue.remarks;
+                    let i = index;
+                    first as isFirst;
+                    last as isLast
+                  "
+                >
+                  <li
+                    *ngIf="
+                      isFirst && issue.expanded && isSingleRemark && isNewMode
+                    "
+                  >
+                    <form>
+                      <div>
+                        <img src="/assets/person-circle-outline.svg" [alt]="" />
+                        <strong
+                          style="
+                            font-family: sans-serif;
+                            font-weight: bolder;
+                            color: chocolate;
+                          "
+                          >You</strong
+                        >
+
+                        <small
+                          style="font-family: sans-serif; font-weight: bolder"
+                          >{{ " on " + r.created_at }}</small
+                        >
+
+                        <textarea
+                          class="remarkArea"
+                          name="txtremark"
+                          matInput
+                          placeholder="Type your remark here .."
+                        ></textarea>
+                      </div>
+                    </form>
+                  </li>
+                  <li>
+                    <span>
+                      <img src="/assets/person-circle-outline.svg" [alt]="" />
+                      <strong>{{ r.user_id }}</strong>
+                    </span>
+                    <small>{{ " on " + r.created_at }} </small>
+                    <br />
+                    <samp> {{ r.remark }}</samp>
+                  </li>
+                </div>
+              </ul>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </section>
+    </mat-accordion>
+    <p
+      *ngIf="!local_data || local_data.length === 0"
+      style="margin-left: auto; margin-right: auto; width: fit-content"
+    >
+      No issue have been Selected .
+    </p>
+  </div>
+</ng-container>

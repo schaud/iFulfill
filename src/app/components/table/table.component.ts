@@ -2,7 +2,7 @@ import {OnInit, AfterViewInit, Component, ViewChild} from '@angular/core';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { NewIssuePopupComponent } from 'src/app/components/dialogs/new-issue-popup/new-issue-popup.component';
+import { NewIssuePopupComponent } from '../../components/dialogs/new-issue-popup/new-issue-popup.component';
 
 export interface Layout {
   id: number;
@@ -53,6 +53,7 @@ export class TableComponent implements OnInit, AfterViewInit {
       }
     })
   }
+
 
 }
 

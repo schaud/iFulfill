@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import Issue from '../models/issue';
+import Issue from '../models/Issue';
 import { MatOptionSelectionChange } from '@angular/material/core';
 
 @Injectable({
