@@ -56,7 +56,8 @@
       <mat-expansion-panel
         #pnlIssues
         *ngFor="let issue of currentItemsToShow; let i = index"
-        (afterExpand)="selectedIssue = issue; expanded = true"
+        (afterExpand)="selectedIssue = issue"
+        (afterCollapse)="issue.expanded = false; isNewMode = false"
       >
         <mat-expansion-panel-header class="expansion-container">
           <mat-panel-title class="expansion-child id">
@@ -120,7 +121,7 @@
               readonly="true"
               style="display: inline; clear: left"
               cols="100"
-              rows="10"
+              rows="6"
             >
  {{ issue.description }}</textarea
             >

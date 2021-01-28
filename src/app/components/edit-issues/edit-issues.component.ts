@@ -155,6 +155,10 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   selectItem(e, i) {
     this.local_data[i].checked = e.checked;
   }
+  activateMultiRemark(e)
+  {
+    this.isSingleRemark=!e.checked;
+  }
 }
 function compare(a: number | string, b: number | string, isAsc: boolean) {
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);

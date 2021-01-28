@@ -452,23 +452,54 @@ mat-icon {
 }
 
 .mat-checkbox {
-  margin: -1px 10px 0px 0px;
+  margin: -1px 10px 0px 5px;
 }
 
 .headercheckbox /deep/ .mat-checkbox-frame {
-  border-color: gold
+  border: 2px gold inset;
 }
 
 #btnclose:hover {
   color: rgb(211, 31, 55);
 }
 
-.remarkArea{
+.remarkArea {
   width: 90%;
-   margin: 2px 3px 3px 6px;
+  margin: 2px 3px 3px 6px;
   border: 1px inset gainsboro;
   background-color: white;
+  display: block;
+}
 
+.mlti.remarkArea {
+  width: 96%;
+  height: 70px;
+  max-height: 130px;
+  padding: 0px !important;
+}
+
+#MultiRemarkText {
+  color: rgb(243, 208, 94);
+  font-family: sans-serif;
+  /* outline: 1px solid gold; */
+}
+
+#divActivateMultiRemark {
+  background-color: rgba(0, 0, 0, 0.829);
+  color: gold;
+  width: 100%;
+  padding: 0px !important;
+  margin: 0px !important;
+  display: block;
+  left: 0px !important;
+}
+
+#divMutilRemark {
+  background-color: rgb(230, 233, 236);
+  margin: 0px !important;
+  margin-bottom: 5px !important;
+  max-height: 150px;
+  width: 100%;
 }
 
 /* .cdk-overlay-pane.my-dialog {

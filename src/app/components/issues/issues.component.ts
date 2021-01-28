@@ -123,7 +123,8 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     iconRegistry.addSvgIconLiteral(
       'cancel',
       sanitizer.bypassSecurityTrustHtml(CANCEL)
-    );  iconRegistry.addSvgIconLiteral(
+    );
+    iconRegistry.addSvgIconLiteral(
       'add',
       sanitizer.bypassSecurityTrustHtml(ADD)
     );
@@ -418,6 +419,7 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       height: '100%',
       width: '100%',
+      panelClass: ['mat-dialog-container'],
       disableClose: true,
       position: { bottom: '50px' },
     });
