@@ -425,15 +425,12 @@ label {
 
 #dvFunctions button {
   margin: 6px;
-
-
 }
 
 #dvFunctions button:hover {
   background-color: #f3c239da;
   color: black;
 }
-
 
 mat-icon {
   width: 33px;
@@ -449,23 +446,26 @@ mat-icon {
 }
 
 .headercheckbox /deep/ .mat-checkbox-frame {
-  border-color: gold
+  border: 2px goldenrod solid;
+}
+
+.headercheckbox:hover /deep/ .mat-checkbox-frame {
+  border: 2px yellow inset;
 }
 
 #btnclose:hover {
   color: rgb(211, 31, 55);
 }
 
-.remarkArea{
+.remarkArea {
   width: 90%;
-   margin: 2px 3px 3px 6px;
+  margin: 2px 3px 3px 6px;
   border: 1px inset gainsboro;
   background-color: white;
   display: block;
-
 }
-mat-dialog-container
-{
+
+mat-dialog-container {
   padding-left: 0px;
   padding-right: 0px;
   padding-top: 24px;
@@ -480,7 +480,51 @@ mat-dialog-container
   max-height: inherit;
 }
 
+#remarkButtons {
+  display: flexbox;
+  background-color: rgba(211, 220, 226, 0.842);
+  height: 33px;
+  vertical-align: middle;
+  padding-top: 4px !important;
+}
 
+#btnAddRemark {
+  float: right;
+  padding: 0px !important;
+  cursor: pointer;
+  color: rgb(6, 173, 78);
+}
+
+#btnAddRemark:hover {
+  color: rgb(8, 222, 20);
+}
+
+#btnCancelRemark {
+  float: right;
+  width: 30px;
+  height: 29px;
+  padding: 0px !important;
+  cursor: pointer;
+  color: rgb(192, 12, 57);
+}
+
+#btnCancelRemark:hover {
+  color: rgb(255, 28, 28)
+}
+
+#btnSaveRemark {
+  float: right;
+  width: 28px;
+  height: 28px;
+  padding: 0px !important;
+  cursor: pointer;
+  color: rgba(26, 75, 167, 0.952);
+  margin-right: 5px;
+}
+
+#btnSaveRemark:hover {
+  color: rgba(4, 103, 250);
+}
 
 /* .cdk-overlay-pane.my-dialog {
   position: relative!important;

@@ -291,62 +291,28 @@
                 border: rgb(133, 130, 130, 0.322) 1px solid;
               "
             >
-              <div
-                style="
-                  display: flexbox;
-                  background-color: rgba(211, 220, 226, 0.842);
-                  height: 33px;
-                  vertical-align: middle;
-                  padding-top: 4px !important;
-                "
-              >
+              <div id="remarkButtons">
                 <strong>Rmarks :</strong>
                 <mat-icon
                   *ngIf="isSingleRemark && !isNewMode"
-                  id="btnclose"
+                  id="btnAddRemark"
                   svgIcon="add"
                   title="add"
-                  style="
-                    float: right;
-                    padding: 0px !important ;
-                    cursor: pointer;
-                    color: rgb(6, 173, 78);
-                  "
-                  color="primary"
                   (click)="showAddRemark(issue.id)"
                 ></mat-icon>
 
                 <mat-icon
                   *ngIf="isSingleRemark && isNewMode"
-                  id="btnsaveRemark"
+                  id="btnCancelRemark"
                   svgIcon="cancel"
                   title="Cancel"
-                  style="
-                    float: right;
-                    width: 30px;
-                    height: 29px;
-                    padding: 0px !important ;
-                    cursor: pointer;
-                    color: rgb(192, 12, 57);
-                  "
-                  color="primary"
                   (click)="cancelAddRemark(issue.id)"
                 ></mat-icon>
                 <mat-icon
                   *ngIf="isSingleRemark && isNewMode"
-                  id="btncancelRemark"
+                  id="btnSaveRemark"
                   svgIcon="save"
                   title="Save"
-                  style="
-                    float: right;
-                    width: 28px;
-                    height: 28px;
-                    padding: 0px !important ;
-                    cursor: pointer;
-                    color: rgba(26, 75, 167, 0.952);
-                    margin-right: 5px;
-                  "
-                  color="primary"
                   (click)="showAddRemark(issue.id)"
                 ></mat-icon>
               </div>
