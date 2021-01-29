@@ -50,8 +50,10 @@
               </mat-checkbox>
             </div>
 
-            <textarea
+            <textarea (resize)="outputsize($event)"
               *ngIf="!isSingleRemark"
+              #txtMltiremark
+              id="txtMltiremark"
               class="mlti remarkArea"
               name="txtremark"
               matInput

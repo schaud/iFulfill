@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   Inject,
   OnInit,
   ViewChild,
@@ -46,6 +47,7 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   isSingleRemark: boolean = true;
   indexExpanded: number = -1;
   isNewMode = false;
+  @ViewChild('txtMltiremark') txtMltiremark: ElementRef;
   ////////////////////////////////////////////////////////
   constructor(
     public dialogRef: MatDialogRef<IssuesComponent>,
@@ -90,6 +92,9 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+
+
+
   }
 
   ///////////////////////////////////////////////////////////////
@@ -155,11 +160,16 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   selectItem(e, i) {
     this.local_data[i].checked = e.checked;
   }
-  activateMultiRemark(e)
-  {
-    this.isSingleRemark=!e.checked;
+  activateMultiRemark(e) {
+    this.isSingleRemark = !e.checked;
   }
+  outputsize(element) {
+  //let width = element.offsetWidth
+  console.log(element.offsetHeight)
+  return element.offsetHeight;
+}
 }
 function compare(a: number | string, b: number | string, isAsc: boolean) {
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
+
