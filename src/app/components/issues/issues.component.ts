@@ -5,7 +5,6 @@ import {
   HostListener,
   ViewChild,
   AfterViewInit,
-  ViewEncapsulation,
   OnDestroy,
 } from '@angular/core';
 // import { ApiServiceService} from '../../services/api-service.service';
@@ -31,6 +30,7 @@ import { Status } from 'src/app/enums/status.enum';
 
 // Imported by Jian Qiu on 1.29.2021
 import { NewIssuePopupComponent } from '../../components/dialogs/new-issue-popup/new-issue-popup.component';
+import { IssueService } from 'src/app/services/issue.service';
 
 const ADD_ICON = `
 <svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Add Circle</title><path d='M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm80 224h-64v64a16 16 0 01-32 0v-64h-64a16 16 0 010-32h64v-64a16 16 0 0132 0v64h64a16 16 0 010 32z'/></svg>
@@ -59,7 +59,6 @@ const CANCEL = `<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox=
   selector: 'app-issues',
   templateUrl: './issues.component.html',
   styleUrls: ['./issues.component.css'],
-
   // encapsulation: ViewEncapsulation.None,
 })
 export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -93,7 +92,7 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
   currentUser = localStorage.getItem('UserEmail');
   selectedIssue: Issue = Object.create(Issue);
   selectedIssues = [];
-
+  hasSelected: boolean = false;
   date: any;
 
   //Variables : Boolean flags
@@ -109,7 +108,8 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     iconRegistry: MatIconRegistry,
-    sanitizer: DomSanitizer
+    sanitizer: DomSanitizer,
+    private issueService: IssueService
   ) {
     this.getScreenSize();
     iconRegistry.addSvgIconLiteral(
@@ -166,6 +166,7 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.issues) {
       this.currentItemsToShow.map((item) => {
         item.checked = e.checked;
+        this.hasSelected = e.checked;
       });
     }
     console.log('selectAll', this.currentItemsToShow, e.checked);
@@ -183,10 +184,16 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.totalSelected <= 0) {
       this.indeterminate = false;
       this.isChecked = false;
+      this.hasSelected = false;
     } else if (this.totalSelected === this.currentItemsToShow.length) {
       this.indeterminate = false;
       this.isChecked = true;
-    } else this.indeterminate = true;
+    } else
+    {
+      this.indeterminate = true;
+      this.hasSelected = true;
+    }
+
   }
 
   validatePercent(percentage) {
@@ -199,17 +206,27 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     return [date.getFullYear(), mnth, day].join('-');
   }
   getIssues() {
+    //  this.issueService.getAllIssues().then((result) => {
+    //     console.log('issueService.getAllIssues().then(result', result);
+    //   }).catch(err=>
+    //     {
+    //       console.log(err)
+    //     });
+
+    //   let xxx = this.issueService.getAllIssues();
+    //   console.log('issueService.getAllIssues().then(result', xxx);
+
     this.showSpinner = true;
     let obj = new Issue();
     obj.id = '11';
     obj.title = 'RM/ RPM approver name not reflecting correctly';
     obj.reported_at = '8/24/2020';
-    obj.criticality = '2';
+    obj.criticality = 'High';
     obj.description = `RM/ RPM approver name not reflecting correctly for RPB associates
       (list contains names of central RMG team), selected approver from the list and
       communicated the same—mail communication attached. (Request for RPM approval)`;
     obj.pending_with = ['Satyen, Bala(Spire)'];
-    obj.status = '1';
+    obj.status = 'Rejected';
     obj.closure_date = '';
     obj.reported_by = 'Yuvasree ';
     obj.verified_by = ' ';
@@ -220,10 +237,10 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     obj.id = '12';
     obj.title = 'ifulfill Session issues';
     obj.reported_at = '8/20/2020';
-    obj.criticality = '4';
+    obj.criticality = 'Low';
     obj.description = `ifulfill Session issues`;
     obj.pending_with = ['Yuvasree'];
-    obj.status = '6';
+    obj.status = 'Pending';
     obj.closure_date = '';
     obj.reported_by = 'Wael';
     obj.verified_by = ' ';
@@ -237,10 +254,10 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     obj.id = '24';
     obj.title = 'Resource is in A3 yet not able to fulfill RR';
     obj.reported_at = '8/22/2020';
-    obj.criticality = '1';
+    obj.criticality = 'High';
     obj.description = `Resource is in A3 yet not able to fulfill RR`;
     obj.pending_with = ['Kiran,Satish'];
-    obj.status = '3';
+    obj.status = 'Open';
     obj.closure_date = '';
     obj.reported_by = 'Sharjeel ';
     obj.verified_by = ' ';
@@ -435,13 +452,10 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  openNewDialog(): void{
+  openNewDialog(): void {
     let dialogRef = this.dialog.open(NewIssuePopupComponent, {
-
-      data: {
-
-      }
-    })
+      data: {},
+    });
   }
   getCurrentDate() {
     let date = new Date();

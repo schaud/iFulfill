@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
@@ -52,7 +53,8 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
     @Inject(MAT_DIALOG_DATA) private data: any,
     private cdr: ChangeDetectorRef,
     iconRegistry: MatIconRegistry,
-    sanitizer: DomSanitizer
+    sanitizer: DomSanitizer,
+    private msgSnakBar: MatSnackBar
   ) {
     this.local_data = Array.from(data.selectedIssues).slice();
     this.origin = JSON.parse(JSON.stringify(data.selectedIssues));
@@ -93,8 +95,42 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   }
 
   ///////////////////////////////////////////////////////////////
-  fillCriticality() {}
-
+  showMessage(msg, action) {
+    //message The message to show in the snackbar.
+    //action The label for the snackbar action.
+    //MatSnackBarHorizontalPosition = 'start' | 'center' | 'end' | 'left' | 'right';
+    // MatSnackBarVerticalPosition = 'top' | 'bottom';
+    this.msgSnakBar.open(msg, action, {
+      duration: 3000,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      panelClass: ['green-snackbar'],
+    });
+  }
+  save(option) {
+    switch (option) {
+      case 1:
+        console.log(' case 1:');
+        console.log('Save this.local_data', this.local_data);
+        this.showMessage(
+          'The selected issues has been updated successfully ! ',
+          'Update Success'
+        );
+        break;
+      case 2:
+        console.log(' case 2:');
+        console.log('Save & Close  this.local_data', this.local_data);
+        this.dialogRef.close(this.local_data);
+        break;
+      case 3:
+        console.log(' case 3:');
+        console.log('Close this.origin', this.origin);
+        this.dialogRef.close(this.origin);
+        break;
+      default:
+        break;
+    }
+  }
   //////////////////////////////////////////////////////////////
   // close(isSaved: boolean) {
   //   if (!isSaved) this.dialogRef.close(null);
@@ -155,9 +191,8 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   selectItem(e, i) {
     this.local_data[i].checked = e.checked;
   }
-  activateMultiRemark(e)
-  {
-    this.isSingleRemark=!e.checked;
+  activateMultiRemark(e) {
+    this.isSingleRemark = !e.checked;
   }
 }
 function compare(a: number | string, b: number | string, isAsc: boolean) {

@@ -1,4 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.red-snackbar {
+  background-color: rgba(214, 39, 62, 0.918);
+}
+
+.green-snackbar {
+  background-color: rgba(53, 167, 104, 0.918);
+  color: rgb(0, 0, 0);
+}
+.green-snackbar .mat-button-wrapper{
+  /* background-color: rgba(2, 2, 2, 0.918); */
+  color: rgb(255, 255, 255);
+  padding: 5px;
+  border: 1px solid rgb(7, 122, 38);
+  border-radius: 15px;
+
+}

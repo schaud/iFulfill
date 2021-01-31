@@ -16,7 +16,7 @@
           <mat-icon svgIcon="add_icon"></mat-icon>
           <span>New Issue</span>
         </button>
-        <button mat-raised-button color="primary" (click)="openEditDialog()">
+        <button  [disabled] ="!hasSelected"  mat-raised-button color="primary" (click)="openEditDialog()">
           <mat-icon svgIcon="edit_selected"></mat-icon>
           <span>Edit Selected Issues </span>
         </button>
