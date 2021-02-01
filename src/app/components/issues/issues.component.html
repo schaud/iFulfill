@@ -20,7 +20,18 @@
           <mat-icon svgIcon="edit_selected"></mat-icon>
           <span>Edit Selected Issues </span>
         </button>
+
+        <span class="spacer"></span>
+        <span>
+  <form class="search-bar">
+    <mat-form-field style="width: 350px; height: 72px">
+      <mat-label class="search-lbl">Search for Issues</mat-label>
+      <input (keyup)="applyFilter($event.target.value)" name="search" matInput>
+    </mat-form-field>
+  </form>
+</span>
       </div>
+
     </section>
     <section
       #issueSort

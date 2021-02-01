@@ -526,6 +526,11 @@ mat-dialog-container {
   color: rgba(4, 103, 250);
 }
 
+.search-bar{
+  margin-top: 10px;
+  margin-bottom: -15px;
+}
+
 /* .cdk-overlay-pane.my-dialog {
   position: relative!important;
 }
