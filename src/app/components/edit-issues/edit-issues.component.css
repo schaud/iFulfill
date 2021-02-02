@@ -549,15 +549,29 @@ mat-icon {
 #btnSaveRemark:hover {
   color: rgba(4, 103, 250);
 }
-/* .cdk-overlay-pane.my-dialog {
-  position: relative!important;
+.data {
+  color: rgb(37, 37, 114);
+  padding-left:2px;
+  font-family: sans-serif;
 }
-.close.mat-button {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 5px;
-  line-height: 14px;
-  min-width: auto;
+
+.dataRow {
+  columns: 3;
+  width: 100%;
+  border: 1px rgba(189, 189, 189, 0.411) solid;
 }
-.flex-container { display: flex;} */
+
+.dataRowfirst {
+  columns: 3;
+  width: 100%;
+  border: 1px rgba(189, 189, 189, 0.411) solid;
+  border-bottom: none;
+}
+
+#subdiv {
+  background-color: rgba(229, 231, 231, 0.466)
+}
+.remarks {
+  background-color: rgba(231, 230, 226, 0.555);
+  border: rgb(133, 130, 130, 0.322) 1px solid;
+}

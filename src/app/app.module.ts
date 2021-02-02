@@ -1,3 +1,4 @@
+import { UsersService } from './services/users.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -46,6 +47,7 @@ import { NewIssuePopupComponent } from './components/dialogs/new-issue-popup/new
 import { IssueService } from './services/issue.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { RemarksService } from './services/remarks.service';
 
 
 @NgModule({
@@ -110,7 +112,7 @@ import { MatSelectModule } from '@angular/material/select';
   providers: [
     CommonService,
     { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
-    IssueService
+    IssueService ,RemarksService,UsersService
   ],
   bootstrap: [AppComponent],
 })
