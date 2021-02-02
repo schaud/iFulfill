@@ -380,6 +380,13 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     let fullDate = `${year}-${month2}-${day2}`;
     return fullDate;
   }
+
+  applyFilter(filterValue: string){
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.currentItemsToShow = this.dataSource.filteredData;
+  }
+
+
 }
 
 function compare(a: number | string, b: number | string, isAsc: boolean) {
