@@ -47,6 +47,7 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   isSingleRemark: boolean = true;
   indexExpanded: number = -1;
   isNewMode = false;
+  formSaved: boolean = false;
   ////////////////////////////////////////////////////////
   constructor(
     public dialogRef: MatDialogRef<IssuesComponent>,
@@ -84,7 +85,7 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     console.log('EditIssuesComponent ngOnInit', this.data);
     //this.selectedIssues = this.local_data;
-
+    this.formSaved = false;
     this.dataSource = new MatTableDataSource<Issue>(this.local_data);
     this.dataSource.sort = this.sort;
 
@@ -107,45 +108,56 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
       panelClass: ['green-snackbar'],
     });
   }
-  save(option) {
-    switch (option) {
-      case 1:
-        console.log(' case 1:');
-        console.log('Save this.local_data', this.local_data);
-        this.showMessage(
-          'The selected issues has been updated successfully ! ',
-          'Update Success'
-        );
-        break;
-      case 2:
-        console.log(' case 2:');
-        console.log('Save & Close  this.local_data', this.local_data);
-        this.dialogRef.close(this.local_data);
-        break;
-      case 3:
-        console.log(' case 3:');
-        console.log('Close this.origin', this.origin);
-        this.dialogRef.close(this.origin);
-        break;
-      default:
-        break;
-    }
+  save() {
+    this.formSaved = true;
+    console.log('Save this.local_data', this.local_data);
+    // switch (option) {
+    //   case 1:
+    //     console.log(' case 1:');
+    //     console.log('Save this.local_data', this.local_data);
+    //     this.showMessage(
+    //       'The selected issues has been updated successfully ! ',
+    //       'Update Success'
+    //     );
+    //     option = 0;
+    //     break;
+    //   case 2:
+    //     console.log(' case 2:');
+    //     console.log('Save & Close  this.local_data', this.local_data);
+    //     this.dialogRef.close(this.local_data);
+    //     option = 0;
+    //     break;
+    //   case 3:
+    //     console.log(' case 3:');
+    //     console.log('Close this.origin', this.origin);
+    //     this.dialogRef.close(this.origin);
+    //     option = 0;
+    //     break;
+    //   default:
+    //     option = 0;
+    //     break;
+    // }
+  }
+  saveAndClose() {
+    console.log('saveAndClose this.local_data', this.local_data);
+   // this.formSaved = false;
+    this.dialogRef.close(this.local_data);
   }
   //////////////////////////////////////////////////////////////
   // close(isSaved: boolean) {
   //   if (!isSaved) this.dialogRef.close(null);
   //   else this.dialogRef.close();
   // }
-  onNoClick(val): void {
+  close() {
     // this.dialogRef.beforeClosed().subscribe((result) => {
     // console.log("beforeClosed",result)
     // });
-    if (val === 1) {
-      console.log('beforeClosed this.origin', this.origin);
-      this.dialogRef.close(this.origin);
-    } else if (val === 2) {
-      console.log('beforeClosed  this.local_data', this.local_data);
+    if (this.formSaved) {
+      console.log('Close this.local_data', this.local_data);
       this.dialogRef.close(this.local_data);
+    } else {
+      console.log('Close this.origin', this.origin);
+      this.dialogRef.close(this.origin);
     }
   }
 
@@ -159,7 +171,7 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
     this.sortedData = dt.sort((a, b) => {
       const isAsc = sort.direction === 'asc';
       switch (sort.active) {
-        case 'id':
+        case 'sr':
           return compare(a.id, b.id, isAsc);
         case 'title':
           return compare(a.title, b.title, isAsc);

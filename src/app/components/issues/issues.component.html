@@ -16,7 +16,12 @@
           <mat-icon svgIcon="add_icon"></mat-icon>
           <span>New Issue</span>
         </button>
-        <button  [disabled] ="!hasSelected"  mat-raised-button color="primary" (click)="openEditDialog()">
+        <button
+          [disabled]="!hasSelected"
+          mat-raised-button
+          color="primary"
+          (click)="openEditDialog()"
+        >
           <mat-icon svgIcon="edit_selected"></mat-icon>
           <span>Edit Selected Issues </span>
         </button>
@@ -38,7 +43,7 @@
         (change)="selectAll($event)"
       >
       </mat-checkbox>
-      <span class="mat-header-cell id" mat-sort-header="id">ID#</span>
+      <span class="mat-header-cell id" mat-sort-header="sr">SR#</span>
       <span class="mat-header-cell" mat-sort-header="title">Title</span>
       <span class="mat-header-cell" mat-sort-header="reported_at"
         >Reported Date</span
@@ -48,7 +53,7 @@
       <span class="mat-header-cell" mat-sort-header="criticality"
         >Criticality</span
       >
-      <span class="mat-header-cell" mat-sort-header="reporter_id"
+      <span class="mat-header-cell" mat-sort-header="reported_by"
         >Reporter</span
       >
     </section>
@@ -67,7 +72,7 @@
               (change)="selectItem($event, i)"
               [checked]="issue.checked"
             ></mat-checkbox>
-            {{ issue.id }}
+            {{ issue.sr }}
           </mat-panel-title>
           <mat-panel-title class="expansion-child">
             {{ issue.title }}
@@ -83,56 +88,50 @@
             {{ resolveCriticality(issue.criticality) }}
           </mat-panel-title>
           <mat-panel-title class="expansion-child">
-            {{ issue.reporter_id }}
+            {{ issue.reported_by }}
           </mat-panel-title>
         </mat-expansion-panel-header>
-        <div id="subdiv" style="background-color: rgba(229, 231, 231, 0.466)">
-          <div
-            style="
-              columns: 4;
-              width: 100%;
-              border: 1px rgba(189, 189, 189, 0.411) solid;
-            "
-          >
+        <div id="subdiv">
+          <div class="dataRowfirst">
             <div>
-              <strong> Pending With : </strong>
-              <span>{{ issue.pending_with }}</span>
-            </div>
-            <div>
-              <strong> Verified By :</strong>
-              <span>{{ issue.verified_by }}</span>
+              <strong> ID#: </strong>
+              <span class="data">{{ issue.id }}</span>
             </div>
             <div>
               <strong> Target Date :</strong>
-              <span>{{ issue.target_date }}</span>
+              <span class="data">{{ issue.target_date }}</span>
             </div>
             <div>
               <strong> Closure date :</strong>
-              <span>{{ issue.closure_date }}</span>
+              <span class="data">{{ issue.closure_date }}</span>
+            </div>
+          </div>
+          <div class="dataRow">
+            <div>
+              <strong> Verified By :</strong>
+              <span class="data">{{ issue.verified_by }}</span>
+            </div>
+            <div>
+              <strong> Pending With : </strong>
+              <span class="data">{{ issue.pending_with }}</span>
             </div>
           </div>
 
-          <br />
-          <p class="task-details">
+          <div class="task-details">
             <strong style="margin-right: 5px; vertical-align: top">
               Description :</strong
             >
             <textarea
               readonly="true"
-              style="display: inline; clear: left"
+              style="display: inline; clear: left; margin-top: 6px !important"
               cols="100"
               rows="6"
+              >{{ issue.description }}</textarea
             >
- {{ issue.description }}</textarea
-            >
-          </p>
+          </div>
 
           <div
-            style="
-              background-color: rgba(231, 230, 226, 0.555);
-
-              border: rgb(133, 130, 130, 0.322) 1px solid;
-            "
+             class="remaks"
           >
             <div id="remarkButtons">
               <strong>Rmarks :</strong>
@@ -208,7 +207,7 @@
                 <li>
                   <span>
                     <img src="/assets/person-circle-outline.svg" [alt]="" />
-                    <strong>{{ r.user_id }}</strong>
+                    <strong>{{getUserById(r.user_id ).fname }}</strong>
                   </span>
                   <small>{{ " on " + r.created_at }} </small>
                   <br />

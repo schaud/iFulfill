@@ -1,3 +1,5 @@
+import { UsersService } from './../../services/users.service';
+import { RemarksService } from './../../services/remarks.service';
 import {
   ChangeDetectorRef,
   Component,
@@ -103,13 +105,16 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
   criticality: any[] = enumSelector(Criticality);
   status: any[] = enumSelector(Status);
   indexExpanded: number = -1;
+  users: User[] = [];
   isNewMode = false;
   constructor(
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer,
-    private issueService: IssueService
+    private issueService: IssueService,
+    private remarkService: RemarksService,
+    private userService: UsersService
   ) {
     this.getScreenSize();
     iconRegistry.addSvgIconLiteral(
@@ -134,8 +139,9 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     );
     // this.sortedData = this.Issues.slice();
     this.getCurrentDate();
-    this.getIssues();
+    //this.getAllusers();
     this.getRemarks();
+    this.getIssues();
   }
   ngOnDestroy(): void {}
   ngAfterViewInit() {
@@ -148,13 +154,6 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.issues) {
-      this.currentItemsToShow.map((item) => {
-        item.checked = false;
-        item.expanded = false;
-        item.remarks = this.getIssueRemarks(item.id);
-      });
-    }
     this.dataSource = new MatTableDataSource<Issue>(this.issues);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -162,6 +161,75 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   //Utility functions
+  async getIssues() {
+    await this.issueService
+      .getAllIssues()
+      .then((result) => {
+        // console.log('issueService.getAllIssues().then(result', result);
+        this.issues = result;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    this.issues.map((item, index) => {
+      //Add isExpanded property to the subtask object
+      item.checked = false;
+      item.expanded = false;
+      item.sr = index + 1;
+      item.remarks = this.getIssueRemarks(item.id);
+    });
+    console.log('getAllIssues issues', this.issues);
+
+    this.dataSource = new MatTableDataSource<Issue>(this.issues);
+    this.dataSource.paginator = this.paginator;
+    this.currentItemsToShow = this.issues.slice(0, this.pageSize);
+    this.showSpinner = false;
+    return this.issues;
+  }
+  getIssueby(id): any {
+    let obj = this.issues.find((i) => i.id === id);
+    console.log(obj);
+    return obj;
+  }
+  getIssueRemarks(id): any[] {
+    let obj: Remark[] = this.remarks.filter((r) => r.case_id === id);
+
+    // let obj = this.remarks.filter((el) => {
+    //   el.user_id === id;
+    //
+    // });
+
+    console.log(`the remarks of issue:${id}: ${obj}`);
+    return obj;
+  }
+  // async getAllusers() {
+  //  await this.userService
+  //     .getAllUsers()
+  //     .then((res) => {
+  //       this.users = res;
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  //   console.log('getAllusers', this.users);
+  // }
+  getUserById(id): User {
+    return this.userService.getUserById(id);
+  }
+  async getRemarks() {
+    await this.remarkService
+      .getIssuesRemarks()
+      .then((res) => {
+        this.remarks = res;
+        console.log('getIssuesRemarks', res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    return this.remarks;
+  }
+
   selectAll(e) {
     if (this.issues) {
       this.currentItemsToShow.map((item) => {
@@ -188,12 +256,10 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     } else if (this.totalSelected === this.currentItemsToShow.length) {
       this.indeterminate = false;
       this.isChecked = true;
-    } else
-    {
+    } else {
       this.indeterminate = true;
       this.hasSelected = true;
     }
-
   }
 
   validatePercent(percentage) {
@@ -205,166 +271,7 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
       day = ('0' + date.getDate()).slice(-2);
     return [date.getFullYear(), mnth, day].join('-');
   }
-  getIssues() {
-    //  this.issueService.getAllIssues().then((result) => {
-    //     console.log('issueService.getAllIssues().then(result', result);
-    //   }).catch(err=>
-    //     {
-    //       console.log(err)
-    //     });
 
-    //   let xxx = this.issueService.getAllIssues();
-    //   console.log('issueService.getAllIssues().then(result', xxx);
-
-    this.showSpinner = true;
-    let obj = new Issue();
-    obj.id = '11';
-    obj.title = 'RM/ RPM approver name not reflecting correctly';
-    obj.reported_at = '8/24/2020';
-    obj.criticality = 'High';
-    obj.description = `RM/ RPM approver name not reflecting correctly for RPB associates
-      (list contains names of central RMG team), selected approver from the list and
-      communicated the same—mail communication attached. (Request for RPM approval)`;
-    obj.pending_with = ['Satyen, Bala(Spire)'];
-    obj.status = 'Rejected';
-    obj.closure_date = '';
-    obj.reported_by = 'Yuvasree ';
-    obj.verified_by = ' ';
-    obj.target_date = ' ';
-    obj.system = 'ifulfill';
-    this.issues.push(obj);
-    obj = new Issue();
-    obj.id = '12';
-    obj.title = 'ifulfill Session issues';
-    obj.reported_at = '8/20/2020';
-    obj.criticality = 'Low';
-    obj.description = `ifulfill Session issues`;
-    obj.pending_with = ['Yuvasree'];
-    obj.status = 'Pending';
-    obj.closure_date = '';
-    obj.reported_by = 'Wael';
-    obj.verified_by = ' ';
-    obj.target_date = `9/11/2020
-    9/25/2020
-    TBD `;
-    obj.system = 'ifulfill';
-    this.issues.push(obj);
-
-    obj = new Issue();
-    obj.id = '24';
-    obj.title = 'Resource is in A3 yet not able to fulfill RR';
-    obj.reported_at = '8/22/2020';
-    obj.criticality = 'High';
-    obj.description = `Resource is in A3 yet not able to fulfill RR`;
-    obj.pending_with = ['Kiran,Satish'];
-    obj.status = 'Open';
-    obj.closure_date = '';
-    obj.reported_by = 'Sharjeel ';
-    obj.verified_by = ' ';
-    obj.target_date = ' ';
-    obj.system = 'ifulfill';
-    this.issues.push(obj);
-
-    this.issues.map((item) => {
-      //Add isExpanded property to the subtask object
-      item.checked = false;
-      item.expanded = false;
-    });
-    this.dataSource = new MatTableDataSource<Issue>(this.issues);
-    this.dataSource.paginator = this.paginator;
-    this.currentItemsToShow = this.issues.slice(0, this.pageSize);
-    this.showSpinner = false;
-    return this.issues;
-  }
-  getIssueby(id): any {
-    let obj = this.issues.find((i) => i.id === id);
-    console.log(obj);
-    return obj;
-  }
-  getIssueRemarks(id): any[] {
-    let obj: Remark[] = this.remarks.filter((r) => r.issue_id === id);
-
-    // let obj = this.remarks.filter((el) => {
-    //   el.user_id === id;
-    //
-    // });
-
-    console.log(`the remarks of issue:${id}: ${obj}`);
-    return obj;
-  }
-  getRemarks() {
-    let obj = new Remark();
-    obj.id = '1';
-    obj.created_at = '8/24/2020';
-    obj.remark = `Need to discuss with Amit Chandak, and Ghanshaym for priority in spire,
-    The data shared by Amit chandak is already maintained in our DB,
-     in case of any issues support will be done from backend till that time.
-      Pooja suggested to remove the irrelevant names from the drop down`;
-    obj.remark_type = 'issue';
-    obj.user_id = 'Satyen';
-    obj.issue_id = '11';
-    this.remarks.push(obj);
-
-    obj = new Remark();
-    obj.id = '2';
-    obj.created_at = '8/24/2020';
-    obj.remark = `Temporarily the session has been disbaled, dev completed for permanent fix, testing to be started`;
-    obj.remark_type = 'issue';
-    obj.user_id = 'Yuvasree';
-    obj.issue_id = '12';
-    this.remarks.push(obj);
-
-    obj = new Remark();
-    obj.id = '3';
-    obj.created_at = '8/24/2020';
-    obj.remark = ` Testing Completed for all scenarios except 1. Possible sln needs to be identified.`;
-    obj.remark_type = 'issue';
-    obj.user_id = 'Yuvasree';
-    obj.issue_id = '12';
-    this.remarks.push(obj);
-
-    obj = new Remark();
-    obj.id = '4';
-    obj.created_at = '8/24/2020';
-    obj.remark = `Data sync up between ifulfill and imanage has one day delay, due to this issue has raised. As per the current design`;
-    obj.remark_type = 'issue';
-    obj.user_id = 'Kiran';
-    obj.issue_id = '24';
-    this.remarks.push(obj);
-
-    obj = new Remark();
-    obj.id = '5';
-    obj.created_at = '8/24/2020';
-    obj.remark = `To be discussed with imanage for sync up to be real time. Narendra to Discuss with Gayatri on priortisation`;
-    obj.remark_type = 'issue';
-    obj.user_id = 'Satish';
-    obj.issue_id = '24';
-    this.remarks.push(obj);
-
-    obj = new Remark();
-    obj.id = '56';
-    obj.created_at = '10/04/2020';
-    obj.remark = `Testing Completed Except 1 scenario`;
-    obj.remark_type = 'issue';
-    obj.user_id = 'Satish';
-    obj.issue_id = '12';
-    this.remarks.push(obj);
-    obj = new Remark();
-    obj.id = '57';
-    obj.created_at = '9/21/2020';
-    obj.remark = `4th Sept : Discussion in prg`;
-    obj.remark_type = 'issue';
-    obj.user_id = 'Satish';
-    obj.issue_id = '24';
-    this.remarks.push(obj);
-    // this.showSpinner = true;
-    // this.complete = false;
-
-    // console.log('Subtasks');
-    // console.log(this.remarks)
-
-    return this.remarks;
-  }
   resolveCriticality(val): string {
     let obj = this.criticality.find((e) => e.value === val);
     //  console.log('resolveCriticality obj ', obj);
@@ -409,7 +316,7 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sortedData = data.sort((a, b) => {
       const isAsc = sort.direction === 'asc';
       switch (sort.active) {
-        case 'id':
+        case 'sr':
           return compare(a.id, b.id, isAsc);
         case 'title':
           return compare(a.title, b.title, isAsc);
