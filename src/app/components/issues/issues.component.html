@@ -12,6 +12,29 @@
   >
     <section>
       <div id="dvFunctions">
+        <span>
+          <form class="search-bar">
+            <mat-form-field
+              style="width: 350px; height: 65px; margin-top: -15px"
+            >
+              <mat-label class="search-lbl">
+                <mat-icon
+                  svgIcon="search"
+                  style="width: 25px; height: 26px; vertical-align: middle"
+                >
+                </mat-icon>
+                <span style="vertical-align: middle"> Search for Issues</span>
+              </mat-label>
+              <input
+                class="searchInput"
+                (keyup)="applyFilter($event.target.value)"
+                name="search"
+                matInput
+              />
+            </mat-form-field>
+          </form>
+        </span>
+        <span class="spacer"></span>
         <button mat-raised-button color="primary" (click)="openNewDialog()">
           <mat-icon svgIcon="add_icon"></mat-icon>
           <span>New Issue</span>
@@ -25,18 +48,7 @@
           <mat-icon svgIcon="edit_selected"></mat-icon>
           <span>Edit Selected Issues </span>
         </button>
-
-        <span class="spacer"></span>
-        <span>
-  <form class="search-bar">
-    <mat-form-field style="width: 350px; height: 72px">
-      <mat-label class="search-lbl">Search for Issues</mat-label>
-      <input (keyup)="applyFilter($event.target.value)" name="search" matInput>
-    </mat-form-field>
-  </form>
-</span>
       </div>
-
     </section>
     <section
       #issueSort
@@ -68,9 +80,10 @@
         >Reporter</span
       >
     </section>
-    <ng-container>
+    <ng-container name="mainContainer" #mainContainer id="mainContainer">
       <mat-expansion-panel
         #pnlIssues
+        name="pnlIssues"
         *ngFor="let issue of currentItemsToShow; let i = index"
         (afterExpand)="selectedIssue = issue"
         (afterCollapse)="issue.expanded = false; isNewMode = false"
@@ -141,9 +154,7 @@
             >
           </div>
 
-          <div
-             class="remaks"
-          >
+          <div class="remaks" (click)="$event.stopPropagation()">
             <div id="remarkButtons">
               <strong>Rmarks :</strong>
               <mat-icon
@@ -151,7 +162,8 @@
                 id="btnAddRemark"
                 svgIcon="add"
                 title="add"
-                (click)="showAddRemark(issue.id)"
+                (click)="$event.stopPropagation()"
+                (click)="showAddRemark(issue)"
               ></mat-icon>
 
               <mat-icon
@@ -159,6 +171,7 @@
                 id="btnCancelRemark"
                 svgIcon="cancel"
                 title="Cancel"
+                (click)="$event.stopPropagation()"
                 (click)="cancelAddRemark(issue.id)"
               ></mat-icon>
               <mat-icon
@@ -166,21 +179,26 @@
                 id="btnSaveRemark"
                 svgIcon="save"
                 title="Save"
-                (click)="showAddRemark(issue.id)"
+                (click)="$event.stopPropagation()"
+                (click)="addRemark(issue, remarkTxt)"
               ></mat-icon>
             </div>
             <ul
+              (click)="$event.stopPropagation()"
               name="ulRemarks"
+              #ulRemarks
               style="padding: 0px !important ; left: 0px !important"
+              ngDefaultControl
             >
               <div
+                (click)="$event.stopPropagation()"
                 style="
                   display: table;
                   padding: 0px !important ;
                   left: 0px !important;
                 "
                 #remarklst
-                name="remarklst "
+                name="remarklst"
                 *ngFor="
                   let r of issue.remarks;
                   let i = index;
@@ -188,8 +206,11 @@
                   last as isLast
                 "
               >
-                <li *ngIf="isFirst && issue.expanded && isNewMode">
-                  <form>
+                <li
+                  *ngIf="isFirst && issue.expanded && isNewMode"
+                  (click)="$event.stopPropagation()"
+                >
+                  <form #frmAddRemark id="frmAddRemark" name="frmAddRemark">
                     <div>
                       <img src="/assets/person-circle-outline.svg" [alt]="" />
                       <strong
@@ -202,13 +223,17 @@
                       >
 
                       <small
+                        class="data"
                         style="font-family: sans-serif; font-weight: bolder"
-                        >{{ " on " + r.created_at }}</small
+                        >{{ " on " + getCurrentDate() }}</small
                       >
 
                       <textarea
+                        (click)="$event.stopPropagation()"
                         class="remarkArea"
-                        name="txtremark"
+                        #txtNewRemark
+                        name="txtNewRemark"
+                        [(ngModel)]="remarkTxt"
                         matInput
                         placeholder="Type your remark here .."
                       ></textarea>
@@ -216,13 +241,16 @@
                   </form>
                 </li>
                 <li>
-                  <span>
+                  <span *ngIf="r.user_id" style="padding: 0px !important">
                     <img src="/assets/person-circle-outline.svg" [alt]="" />
-                    <strong>{{getUserById(r.user_id ).fname }}</strong>
+                    <strong>{{ getUserById(r.user_id).fname }}</strong>
+                    <small *ngIf="r.created_at" class="data"
+                      >{{ " on " + r.created_at }}
+                    </small>
                   </span>
-                  <small>{{ " on " + r.created_at }} </small>
+
                   <br />
-                  <samp> {{ r.remark }}</samp>
+                  <samp *ngIf="r.remark"> {{ r.remark }}</samp>
                 </li>
               </div>
             </ul>

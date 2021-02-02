@@ -273,10 +273,6 @@ th.mat-sort-header-sorted {
   color: black;
 }
 
-.search-lbl {
-  font-size: 16px;
-}
-
 .mat-header-row {
   display: flex;
   border-bottom-width: 1px;
@@ -382,11 +378,6 @@ label {
   font-family: sans-serif;
 }
 
-.mat-expansion-panel-header .mat-expanded {
-  cursor: pointer;
-  background-color: rgba(240, 235, 235, 0.267);
-}
-
 /* .mat-expansion-panel-body {
   padding: 0 24px 16px;
   background-color: rgb(88, 169, 223);
@@ -408,8 +399,8 @@ label {
   background-color: rgb(88, 169, 223);
 } */
 
-.mat-expansion-toggle-indicator-after, .mat-expanded, .mat-expanded:hover, .mat-expanded:focus {
-  background-color: rgba(228, 230, 231, 0.438);
+.mat-expansion-panel-header.mat-expanded, .mat-expansion-panel-header.mat-expanded:hover, .mat-expansion-panel-header.mat-expanded:focus {
+  background-color: rgba(78, 78, 71, 0.329);
 }
 
 /* .mat-expansion-panel-header.mat-expanded ,
@@ -527,10 +518,9 @@ mat-dialog-container {
   color: rgba(4, 103, 250);
 }
 
- 
 .data {
   color: rgb(37, 37, 114);
-  padding-left:2px;
+  padding-left: 2px;
   font-family: sans-serif;
 }
 
@@ -551,13 +541,33 @@ mat-dialog-container {
   background-color: rgba(229, 231, 231, 0.466)
 }
 
+.mat-form-field /deep/ .mat-form-field-underline {
+  display: none;
+}
+
 .remarks {
   background-color: rgba(231, 230, 226, 0.555);
   border: rgb(133, 130, 130, 0.322) 1px solid;
- 
-.search-bar{
+}
+
+.search-bar {
   margin-top: 10px;
   margin-bottom: -15px;
- 
 }
- 
+
+.search-lbl {
+  font-size: 16px;
+}
+
+.searchInput {
+  height: 28px;
+  vertical-align: middle;
+  margin-left: -5px;
+  ;
+  background-color: rgba(228, 230, 231, 0.76);
+  padding-bottom: 5px;
+  border: 1px solid gray;
+  border-radius: 12px;
+  padding-left: 3px;
+
+}

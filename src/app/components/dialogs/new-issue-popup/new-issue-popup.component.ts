@@ -3,6 +3,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import Issue from '../../../models/Issue';
 import { FormBuilder, Validators } from '@angular/forms';
 import { IssueService } from '../../../services/issue.service';
+import { enumSelector } from 'src/app/services/common.service';
+import { Status } from 'src/app/enums/status.enum';
+import { Criticality } from 'src/app/enums/criticality.enum';
 
 @Component({
   selector: 'app-new-issue-popup',
@@ -13,7 +16,8 @@ export class NewIssuePopupComponent implements OnInit {
 
   action: string;
   local_data: any;
-
+  public criticality: any[] = enumSelector(Criticality);
+  public status: any[] = enumSelector(Status);
   issueFormGroup = this.issueFrom.group({
     title: ['', Validators.required],
     status: ['', Validators.required],

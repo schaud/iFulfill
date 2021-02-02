@@ -10,18 +10,33 @@ body {
 }
 
 .red-snackbar {
-  background-color: rgba(214, 39, 62, 0.918);
+  background-color: rgba(248, 143, 157, 0.842);
+  color: rgb(0, 0, 0);
+}
+.red-snackbar .mat-button-wrapper {
+  /* background-color: rgba(2, 2, 2, 0.918); */
+  color: rgb(255, 255, 255);
+  padding: 5px;
+  border: 1px solid rgb(122, 7, 26);
+  border-radius: 15px;
+}
+.blue-snackbar {
+  background-color: rgba(33, 111, 212, 0.918);
+}
+
+.yellow-snackbar {
+  background-color: rgba(215, 218, 90, 0.918);
 }
 
 .green-snackbar {
   background-color: rgba(53, 167, 104, 0.918);
   color: rgb(0, 0, 0);
 }
-.green-snackbar .mat-button-wrapper{
+
+.green-snackbar .mat-button-wrapper {
   /* background-color: rgba(2, 2, 2, 0.918); */
   color: rgb(255, 255, 255);
   padding: 5px;
   border: 1px solid rgb(7, 122, 38);
   border-radius: 15px;
-
 }

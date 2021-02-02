@@ -10,10 +10,9 @@
   <mat-form-field appearance="fill">
     <mat-label>Status</mat-label>
     <select matNativeControl required formControlName="status">
-      <option value="Open">Open</option>
-      <option value="In Progress">In Progress</option>
-      <option value="Under Review">Under Review</option>
-      <option value="Closed">Closed</option>
+      <option *ngFor="let c of status" [value]="c.value">
+        {{ c.title }}
+      </option>
     </select>
   </mat-form-field>
 
@@ -22,10 +21,9 @@
   <mat-form-field appearance="fill">
     <mat-label>Criticality</mat-label>
     <select matNativeControl required formControlName="criticality">
-      <option value="Open">Open</option>
-      <option value="In Progress">In Progress</option>
-      <option value="Under Review">Under Review</option>
-      <option value="Closed">Closed</option>
+      <option *ngFor="let c of  criticality" [value]="c.value">
+        {{ c.title }}
+      </option>
     </select>
   </mat-form-field>
 

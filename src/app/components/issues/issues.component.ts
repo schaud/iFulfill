@@ -1,3 +1,4 @@
+import { CommonService } from './../../services/common.service';
 import { UsersService } from './../../services/users.service';
 import { RemarksService } from './../../services/remarks.service';
 import {
@@ -57,6 +58,7 @@ const EDIT_SELECTED = `<svg viewBox="0 0 64 64">
 const ADD = `<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Add Circle</title><path d='M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm80 224h-64v64a16 16 0 01-32 0v-64h-64a16 16 0 010-32h64v-64a16 16 0 0132 0v64h64a16 16 0 010 32z'/></svg>`;
 const SAVE = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Save</title><path d="M380.44 32H64a32 32 0 00-32 32v384a32 32 0 0032 32h384a32.09 32.09 0 0032-32V131.56zM112 176v-64h192v64zm223.91 179.76a80 80 0 11-83.66-83.67 80.21 80.21 0 0183.66 83.67z"/></svg>`;
 const CANCEL = `<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Close Circle</title><path d='M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm86.63 272L320 342.63l-64-64-64 64L169.37 320l64-64-64-64L192 169.37l64 64 64-64L342.63 192l-64 64z'/></svg>`;
+const SESRCH = `<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Search Circle</title><path d='M256 80a176 176 0 10176 176A176 176 0 00256 80z' fill='none' stroke='currentColor' stroke-miterlimit='10' stroke-width='32'/><path d='M232 160a72 72 0 1072 72 72 72 0 00-72-72z' fill='none' stroke='currentColor' stroke-miterlimit='10' stroke-width='32'/><path fill='none' stroke='currentColor' stroke-linecap='round' stroke-miterlimit='10' stroke-width='32' d='M283.64 283.64L336 336'/></svg>`;
 @Component({
   selector: 'app-issues',
   templateUrl: './issues.component.html',
@@ -107,6 +109,8 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
   indexExpanded: number = -1;
   users: User[] = [];
   isNewMode = false;
+  remarkTxt: string = '';
+
   constructor(
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -114,7 +118,8 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     sanitizer: DomSanitizer,
     private issueService: IssueService,
     private remarkService: RemarksService,
-    private userService: UsersService
+    private userService: UsersService,
+    private commonService: CommonService
   ) {
     this.getScreenSize();
     iconRegistry.addSvgIconLiteral(
@@ -137,11 +142,15 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
       'add',
       sanitizer.bypassSecurityTrustHtml(ADD)
     );
+    iconRegistry.addSvgIconLiteral(
+      'search',
+      sanitizer.bypassSecurityTrustHtml(SESRCH)
+    );
     // this.sortedData = this.Issues.slice();
     this.getCurrentDate();
-    //this.getAllusers();
     this.getRemarks();
     this.getIssues();
+    //this.getAllusers();
   }
   ngOnDestroy(): void {}
   ngAfterViewInit() {
@@ -154,6 +163,8 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.getRemarks();
+    this.getIssues();
     this.dataSource = new MatTableDataSource<Issue>(this.issues);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -191,7 +202,7 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log(obj);
     return obj;
   }
-  getIssueRemarks(id): any[] {
+  getIssueRemarks(id): Remark[] {
     let obj: Remark[] = this.remarks.filter((r) => r.case_id === id);
 
     // let obj = this.remarks.filter((el) => {
@@ -201,6 +212,66 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     console.log(`the remarks of issue:${id}: ${obj}`);
     return obj;
+  }
+
+  async updateIssueRemarks() {
+    // let issueRemarks: Remark[] = [];
+    // await this.remarkService
+    //   .getRemarksByIssuesId(issueId)
+    //   .then((res) => {
+    //     issueRemarks = res;
+    //     console.log('getRemarksByIssuesId', issueRemarks);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    this.getRemarks();
+    this.issues.map((item, index) => {
+      //Add isExpanded property to the subtask object
+      item.checked = false;
+      item.expanded = false;
+      item.sr = index + 1;
+      item.remarks = this.getIssueRemarks(item.id);
+    });
+
+    console.log('updateIssueRemarks this.issues.map', this.issues);
+    this.dataSource = new MatTableDataSource<Issue>(this.issues);
+    this.dataSource.paginator = this.paginator;
+    this.currentItemsToShow = this.issues.slice(0, this.pageSize);
+
+    // this.currentItemsToShow.find(
+    //   (i) => i.id == issue.ids
+    // ).remarks = this.getIssueRemarks(issue.id);
+  }
+  async addRemark(issue, remark) {
+    // await this.updateIssueRemarks(issue);
+    if (issue && remark && String(remark).length > 0) {
+      let obj = new Remark();
+      obj.case_id = issue.id;
+      obj.remark_type = 'issue';
+      obj.remark = remark;
+      obj.user_id = this.userService.getUserById(
+        '35d8d84f-f8f6-40e1-9a61-37ec8446d65f'
+      ).id;
+      obj.created_at = this.getCurrentDate();
+      console.log('addRemark', issue, remark, String(remark).length, obj);
+
+      await this.remarkService.addRemark(obj).then(()=>
+      {
+        this.updateIssueRemarks() ;
+      });
+
+      // this.issues.find((i) => {
+      //   return i.id === issueid;
+      // }).expanded = false;
+      this.remarkTxt = '';
+      this.isNewMode = false;
+    } else {
+      this.commonService.showMessage(
+        'Please Enter the Remark Description',
+        'error'
+      );
+    }
   }
   // async getAllusers() {
   //  await this.userService
@@ -221,7 +292,7 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
       .getIssuesRemarks()
       .then((res) => {
         this.remarks = res;
-        console.log('getIssuesRemarks', res);
+       // console.log('getIssuesRemarks', res);
       })
       .catch((err) => {
         console.log(err);
@@ -283,21 +354,30 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     return obj.title;
   }
   // Angular Material Function: Used for creating Subtasks
-  showAddRemark(id) {
+  showAddRemark(issue) {
     this.issues.map((i) => {
-      i.id === id ? (i.expanded = true) : (i.expanded = false);
+      i.id === issue.id ? (i.expanded = true) : (i.expanded = false);
+      if (!issue.remarks || issue.remarks.length < 1) {
+        let x = new Remark();
+        issue.remarks.push(x);
+      }
     });
     this.isNewMode = true;
-    console.log(`showAddRemark this.local_data ${id}`, this.issues);
+
+    console.log(`showAddRemark  ${issue.id}`, this.issues);
   }
   cancelAddRemark(id) {
-    this.issues.find((i) => {
-      return i.id === id;
-    }).expanded = false;
+    if (id) {
+      this.issues.find((i) => {
+        return i.id === id;
+      }).expanded = false;
+    }
     this.isNewMode = false;
-    console.log(`cancelAddRemark this.local_data ${id}`, this.issues);
+ //   console.log(`cancelAddRemark t  ${id}`, this.issues);
   }
+
   async onPageChange($event) {
+    this.pageSize = $event.pageSize;
     this.currentItemsToShow = this.issues;
     this.currentItemsToShow = this.issues.slice(
       $event.pageIndex * $event.pageSize,
@@ -381,12 +461,10 @@ export class IssuesComponent implements OnInit, AfterViewInit, OnDestroy {
     return fullDate;
   }
 
-  applyFilter(filterValue: string){
+  applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     this.currentItemsToShow = this.dataSource.filteredData;
   }
-
-
 }
 
 function compare(a: number | string, b: number | string, isAsc: boolean) {

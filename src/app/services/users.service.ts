@@ -37,7 +37,7 @@ export class UsersService {
   }
   getUserById(id): User {
     if (this.users) {
-      let u = this.users.find((u) => u.id === id);
+      let u = this.users.find((i) => i.id === id);
       console.log('getUserById', u);
       return u;
     } else return null;

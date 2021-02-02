@@ -22,18 +22,32 @@ export class RemarksService {
         console.log(err);
       });
   }
-  addRemark(remark: Remark): Remark {
+  getRemarksByIssuesId(id): Promise<any> {
+    return this.http
+      .get<any>(
+        `https://34a2a1pxbl.execute-api.us-east-2.amazonaws.com/dev/remarks/issue-id/${id}`
+      )
+      .toPromise()
+      .then((resonse: Response) => {
+        return resonse['remarks'];
+      })
+
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  addRemark(remark: Remark):Promise<Remark>  {
     let rem: Remark = {};
-    this.http
-      .post<Remark>(CommonService.RemarksPath, remark)
+    return this.http
+      .post<any>(CommonService.RemarksPath, remark)
       .toPromise()
       .then((res) => {
-        rem = res;
+        return res;
       })
       .catch((err) => {
         console.log(err);
       });
-    return rem;
+
   }
   //  getIssuesRemarks(): Promise<any> {
   //   return this.http
