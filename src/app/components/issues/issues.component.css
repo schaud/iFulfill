@@ -354,9 +354,9 @@ li samp {
   width: auto;
   display: block;
   /* background-color: rgba(235, 244, 247, 0.904); */
-  background-color: rgba(236, 248, 255, 0.945);
+  background-color: rgba(232, 243, 252, 0.76);
   border: solid 1px rgb(207, 207, 207);
-  border-bottom: none;
+  border-bottom: none !important;
   /* padding-left: 10px; */
   padding: 0px !important;
   margin:    0px !important;
