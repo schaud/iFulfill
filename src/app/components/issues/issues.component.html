@@ -241,16 +241,14 @@
                   </form>
                 </li>
                 <li>
-                  <span *ngIf="r.user_id" style="padding: 0px !important">
+
+                  <samp *ngIf="r.remark">  <span *ngIf="r.user_id" >
                     <img src="/assets/person-circle-outline.svg" [alt]="" />
                     <strong>{{ getUserById(r.user_id).fname }}</strong>
-                    <small *ngIf="r.created_at" class="data"
-                      >{{ " on " + r.created_at }}
+                    <small *ngIf="r.created_at"
+                      >{{ " on " + r.created_at|date:'M/d/yy h:mm a'+" :"}}
                     </small>
-                  </span>
-
-                  <br />
-                  <samp *ngIf="r.remark"> {{ r.remark }}</samp>
+                  </span> {{ r.remark }}</samp>
                 </li>
               </div>
             </ul>
