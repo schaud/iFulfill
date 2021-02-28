@@ -1,7 +1,11 @@
+import { UsersService } from './../../services/users.service';
+import { RemarksService } from './../../services/remarks.service';
+import { CommonService } from './../../services/common.service';
 import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   Inject,
   OnInit,
   ViewChild,
@@ -16,8 +20,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Criticality } from 'src/app/enums/criticality.enum';
 import { Status } from 'src/app/enums/status.enum';
 import { Issue } from 'src/app/models/Issue';
-import { enumSelector } from 'src/app/services/common.service';
+import { enumSelector, getCurrentDate } from 'src/app/services/common.service';
 import { IssuesComponent } from '../issues/issues.component';
+import { Remark } from 'src/app/models/Remark';
 const SAVE_ALL = `<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Save</title><path d='M380.93 57.37A32 32 0 00358.3 48H94.22A46.21 46.21 0 0048 94.22v323.56A46.21 46.21 0 0094.22 464h323.56A46.36 46.36 0 00464 417.78V153.7a32 32 0 00-9.37-22.63zM256 416a64 64 0 1164-64 63.92 63.92 0 01-64 64zm48-224H112a16 16 0 01-16-16v-64a16 16 0 0116-16h192a16 16 0 0116 16v64a16 16 0 01-16 16z' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32'/></svg>`;
 const CANCEL = `<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Close Circle</title><path d='M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208 208-93.31 208-208S370.69 48 256 48zm86.63 272L320 342.63l-64-64-64 64L169.37 320l64-64-64-64L192 169.37l64 64 64-64L342.63 192l-64 64z'/></svg>`;
 const SVAE_CLOSE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
@@ -31,8 +36,8 @@ const SAVE = `<svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0
   styleUrls: ['./edit-issues.component.css'],
 })
 export class EditIssuesComponent implements OnInit, AfterViewInit {
-  public local_data: any = [];
-  private origin: any;
+  public local_data = [];
+  private origin = [];
   //selectedIssues: any = [];
   remarks: any = [];
   users: any = [];
@@ -40,6 +45,7 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   sortedData: Issue[];
   pageSize: number = 3;
   dataSource: MatTableDataSource<Issue>;
+  @ViewChild('txtremark') txtremark: ElementRef;
   @ViewChild('issueSort') issueSort: MatSort;
   @ViewChild(MatSort) sort: MatSort;
   public criticality: any[] = enumSelector(Criticality);
@@ -47,7 +53,12 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   isSingleRemark: boolean = true;
   indexExpanded: number = -1;
   isNewMode = false;
+  remarkTxt = '';
   formSaved: boolean = false;
+  currentDate: string = '';
+  userService: UsersService;
+  remarkService: RemarksService;
+  multiRemarkText: string = '';
   ////////////////////////////////////////////////////////
   constructor(
     public dialogRef: MatDialogRef<IssuesComponent>,
@@ -55,9 +66,12 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer,
-    private msgSnakBar: MatSnackBar
+    private msgSnakBar: MatSnackBar,
+    private commonService: CommonService
   ) {
-    this.local_data = Array.from(data.selectedIssues).slice();
+    this.local_data = [...data.selectedIssues];
+    this.userService = data.userService;
+    this.remarkService = data.remarkService;
     this.origin = JSON.parse(JSON.stringify(data.selectedIssues));
     console.log('this.local_data', this.local_data);
     iconRegistry.addSvgIconLiteral(
@@ -80,6 +94,8 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
       'save',
       sanitizer.bypassSecurityTrustHtml(SAVE)
     );
+
+    this.currentDate = getCurrentDate();
   }
   /////////////////////////////////////////////////////////////
   ngOnInit(): void {
@@ -96,52 +112,63 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   }
 
   ///////////////////////////////////////////////////////////////
-  showMessage(msg, action) {
-    //message The message to show in the snackbar.
-    //action The label for the snackbar action.
-    //MatSnackBarHorizontalPosition = 'start' | 'center' | 'end' | 'left' | 'right';
-    // MatSnackBarVerticalPosition = 'top' | 'bottom';
-    this.msgSnakBar.open(msg, action, {
-      duration: 3000,
-      verticalPosition: 'top',
-      horizontalPosition: 'center',
-      panelClass: ['green-snackbar'],
-    });
-  }
-  save() {
+
+  async save() {
     this.formSaved = true;
-    console.log('Save this.local_data', this.local_data);
-    // switch (option) {
-    //   case 1:
-    //     console.log(' case 1:');
-    //     console.log('Save this.local_data', this.local_data);
-    //     this.showMessage(
-    //       'The selected issues has been updated successfully ! ',
-    //       'Update Success'
-    //     );
-    //     option = 0;
-    //     break;
-    //   case 2:
-    //     console.log(' case 2:');
-    //     console.log('Save & Close  this.local_data', this.local_data);
-    //     this.dialogRef.close(this.local_data);
-    //     option = 0;
-    //     break;
-    //   case 3:
-    //     console.log(' case 3:');
-    //     console.log('Close this.origin', this.origin);
-    //     this.dialogRef.close(this.origin);
-    //     option = 0;
-    //     break;
-    //   default:
-    //     option = 0;
-    //     break;
-    // }
+    if (
+      this.local_data?.length > 0 &&
+      this.multiRemarkText &&
+      String(this.multiRemarkText).length > 0
+    ) {
+      await this.addMultieRemark(this.multiRemarkText)
+        .then(() => {
+          this.multiRemarkText = '';
+        })
+        .then(() => {
+          this.isSingleRemark = true;
+          this.isNewMode = false;
+        });
+    } else if (
+      !this.isSingleRemark &&
+      !this.multiRemarkText &&
+      String(this.multiRemarkText).length < 1
+    ) {
+      this.isSingleRemark = false;
+      this.txtremark.nativeElement.focus();
+      this.commonService.showMessage(
+        'Please Enter the Remark Description',
+        'error'
+      );
+    }
   }
-  saveAndClose() {
-    console.log('saveAndClose this.local_data', this.local_data);
-   // this.formSaved = false;
-    this.dialogRef.close(this.local_data);
+  async saveAndClose() {
+    this.formSaved = true;
+    if (
+      this.local_data?.length > 0 &&
+      this.multiRemarkText &&
+      String(this.multiRemarkText).length > 0
+    ) {
+      await this.addMultieRemark(this.multiRemarkText).then(() => {
+        this.dialogRef.close(this.local_data);
+      });
+    } else if (
+      !this.isSingleRemark &&
+      !this.multiRemarkText &&
+      String(this.multiRemarkText).length < 1
+    ) {
+      this.isSingleRemark = false;
+      this.txtremark.nativeElement.focus();
+      this.commonService.showMessage(
+        'Please Enter the Remark Description',
+        'error'
+      );
+    } else if (
+      this.isSingleRemark &&
+      !this.multiRemarkText &&
+      String(this.multiRemarkText).length < 1
+    ) {
+      this.dialogRef.close(this.local_data);
+    }
   }
   //////////////////////////////////////////////////////////////
   // close(isSaved: boolean) {
@@ -186,17 +213,124 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  showAddRemark(id) {
-    this.local_data.map((i) => {
-      i.id === id ? (i.expanded = true) : (i.expanded = false);
+  async addMultieRemark(remark) {
+    // await this.updateIssueRemarks(issue);
+    let counter: number = 0;
+    this.local_data.forEach(async (issue) => {
+      let obj = new Remark();
+      obj.case_id = issue.id;
+      obj.remark_type = 'issue';
+      obj.remark = remark;
+      let usr;
+      await this.userService
+        .getCurrentUser()
+        .then((res) => {
+          usr = res;
+        })
+        .catch(() => (obj.user_id = ''));
+      obj.user_id = usr.id;
+      obj.created_at = getCurrentDate();
+      //  console.log('addRemark', issue, remark, String(remark).length, obj);
+
+      await this.remarkService
+        .addRemark(obj)
+        .then((res) => {
+          if (res.id) {
+            ++counter;
+            let r = { ...res, username: usr.username };
+            issue.remarks.unshift(r);
+          }
+        })
+        .then(() => {
+          if (counter === this.local_data.length) {
+            this.commonService.showMessage(
+              'Remark Added Successfully ..',
+              'success'
+            );
+          }
+        })
+        .catch((err) => {
+          this.commonService.showMessage(err, 'error');
+        });
+
+      issue.remarks = await this.remarkService.filterRemarksByCaseId(
+        issue.id,
+        true
+      );
     });
+  }
+  async addRemark(issue, remark) {
+    // await this.updateIssueRemarks(issue);
+    if (issue && remark && String(remark).length > 0) {
+      let obj = new Remark();
+      obj.case_id = issue.id;
+      obj.remark_type = 'issue';
+      obj.remark = remark;
+      let usr;
+      await this.userService
+        .getCurrentUser()
+        .then((res) => {
+          usr = res;
+        })
+        .catch(() => (obj.user_id = ''));
+      obj.user_id = usr.id;
+      obj.created_at = getCurrentDate();
+      //  console.log('addRemark', issue, remark, String(remark).length, obj);
+
+      await this.remarkService
+        .addRemark(obj)
+        .then((res) => {
+          if (res.id) {
+            this.formSaved = true;
+            this.local_data.map((issu) => {
+              if (issu.id === res.case_id) {
+                let r = { ...res, username: usr.username };
+                issu.remarks.unshift(r);
+              }
+            });
+          }
+        })
+        .then(() => {
+          if (this.isSingleRemark) {
+            this.commonService.showMessage(
+              'Remark Added Successfully ..',
+              'success'
+            );
+          }
+        })
+        .catch((err) => {
+          this.commonService.showMessage(err, 'error');
+        });
+
+      issue.remarks = await this.remarkService.filterRemarksByCaseId(
+        issue.id,
+        true
+      );
+
+      this.remarkTxt = '';
+      this.isNewMode = false;
+    } else {
+      if (this.isSingleRemark) {
+        this.commonService.showMessage(
+          'Please Enter the Remark Description',
+          'error'
+        );
+      }
+    }
+  }
+  showAddRemark(id) {
+    // this.local_data.map((i) => {
+    //   i.id === id ? (i.expanded = true) : (i.expanded = false);
+    // });
     this.isNewMode = true;
+    this.remarkTxt = '';
     console.log(`showAddRemark this.local_data ${id}`, this.local_data);
   }
   cancelAddRemark(id) {
-    this.local_data.find((i) => {
-      return i.id === id;
-    }).expanded = false;
+    // this.local_data.find((i) => {
+    //   return i.id === id;
+    // }).expanded = false;
+    this.remarkTxt = '';
     this.isNewMode = false;
     console.log(`cancelAddRemark this.local_data ${id}`, this.local_data);
   }
@@ -205,6 +339,16 @@ export class EditIssuesComponent implements OnInit, AfterViewInit {
   }
   activateMultiRemark(e) {
     this.isSingleRemark = !e.checked;
+    this.multiRemarkText = '';
+    // if (e.checked) {    this.multiRemarkText = '';
+    //   this.txtremark.nativeElement.focus();
+    // }
+  }
+
+  afterExpand(issue) {
+    issue.expanded = true;
+    this.remarkTxt = '';
+    this.isNewMode = false;
   }
 }
 function compare(a: number | string, b: number | string, isAsc: boolean) {

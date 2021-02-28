@@ -367,7 +367,7 @@ li samp {
   border-bottom-left-radius: 12px;
 }
 li:last-child samp{
-  border-bottom: solid 1px rgb(207, 207, 207);
+  border-bottom: solid 1px rgb(207, 207, 207) ;
 }
 li:last-child {
   margin-bottom: 2px;
@@ -483,7 +483,8 @@ mat-dialog-container {
 
 #remarkButtons {
   display: flexbox;
-  background-color: rgba(211, 220, 226, 0.842);
+  /* background-color: rgba(211, 220, 226, 0.842); */
+  background-color: rgba(230, 226, 238, 0.842);
   height: 33px;
   vertical-align: middle;
   padding-top: 4px !important;
@@ -528,7 +529,7 @@ mat-dialog-container {
 }
 
 .data {
-  color: rgb(37, 37, 114);
+  color: rgb(18, 32, 112);
   padding-left: 2px;
   padding-left: 2px;
   font-family: sans-serif;
@@ -587,4 +588,15 @@ mat-dialog-container {
   padding-bottom: 0px !important;
   margin: 0px !important;
 
+}
+
+#icoClear
+{
+  color: rgb(61, 60, 60);
+  width: 26px; height: 26px; vertical-align: middle
+}
+
+#icoClear:hover
+{
+  color:rgb(226, 169, 25)
 }

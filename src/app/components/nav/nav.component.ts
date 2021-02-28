@@ -28,9 +28,10 @@ export class NavComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.CurrentUser = this.userServ.getUserById(
-      '21ac1b26-1f4c-4f3e-82e4-e719790b1f50'
-    );
+    this.userServ
+      .getCurrentUser()
+      .then((res) => (this.CurrentUser = res.username))
+      .catch(() => (this.CurrentUser = ''));
 
   }
 }

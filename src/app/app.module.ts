@@ -20,7 +20,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { FiltersComponent } from './components/filters/filters.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInput, MatInputModule } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { IssuesComponent } from './components/issues/issues.component';
 import { EditIssuesComponent } from './components/edit-issues/edit-issues.component';
 import { MatCardModule } from '@angular/material/card';
@@ -39,7 +39,10 @@ import {
   ShowOnDirtyErrorStateMatcher,
 } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatChipsModule } from '@angular/material/chips';
+import {MatAutocompleteModule} from '@angular/material/autocomplete'
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { CommonService } from './services/common.service';
 
 // Imported by Jian Qiu on 1.29.2021
@@ -59,7 +62,7 @@ import { RemarksService } from './services/remarks.service';
     FiltersComponent,
     IssuesComponent,
     EditIssuesComponent,
-    NewIssuePopupComponent
+    NewIssuePopupComponent,
   ],
   imports: [
     BrowserModule,
@@ -102,17 +105,21 @@ import { RemarksService } from './services/remarks.service';
     MatMenuModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatGridListModule,
     MatSortModule,
     MatSnackBarModule,
     MatButtonModule,
-
+    MatChipsModule,
+    MatAutocompleteModule,
     ReactiveFormsModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   providers: [
     CommonService,
     { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
-    IssueService ,RemarksService,UsersService
+    IssueService,
+    RemarksService,
+    UsersService,
   ],
   bootstrap: [AppComponent],
 })

@@ -20,8 +20,7 @@
         <button
           mat-raised-button
           color="primary"
-          (click)="$event.stopPropagation()"
-          (click)="saveAndClose()"
+          (click)="$event.stopPropagation(); saveAndClose()"
           cdkFocusInitial
         >
           <mat-icon svgIcon="save_close"></mat-icon>
@@ -33,33 +32,39 @@
           svgIcon="cancel"
           style="float: right; cursor: pointer"
           color="primary"
-          (click)="$event.stopPropagation()"
-          (click)="close()"
+          (click)="$event.stopPropagation(); close()"
         ></mat-icon>
         <hr
           style="padding: 0px !important; border: 1px solid black; margin: -1px"
         />
         <div id="divMutilRemark">
-          <form style="margin-left: 0px">
-            <div id="divActivateMultiRemark">
-              <mat-checkbox
-                id="chkActivateMultiRemark"
-                class="headercheckbox"
-                (change)="activateMultiRemark($event)"
-                ><strong id="MultiRemarkText"
-                  >Add One Remark for All Selected Issues
-                </strong>
-              </mat-checkbox>
-            </div>
+          <!-- <form style="margin-left: 0px"> -->
+          <div id="divActivateMultiRemark" (click)="$event.stopPropagation()">
+            <mat-checkbox
+              id="chkActivateMultiRemark"
+              #chkActivateMultiRemark
+              class="headercheckbox"
+              name="chkActivateMultiRemark"
+              [checked]="!isSingleRemark"
+              (change)="activateMultiRemark($event); "
+              ><strong id="MultiRemarkText"
+                >Set Remark for All Selected Issues
+              </strong>
+            </mat-checkbox>
+          </div>
 
-            <textarea
-              *ngIf="!isSingleRemark"
-              class="mlti remarkArea"
-              name="txtremark"
-              matInput
-              placeholder="Type your remark here .."
-            ></textarea>
-          </form>
+          <textarea
+            *ngIf="!isSingleRemark"
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()"
+            class="mlti remarkArea"
+            #txtremark
+            name="txtremark"
+            [(ngModel)]="multiRemarkText"
+            matInput
+            placeholder="Type your remark here .."
+          ></textarea>
+          <!-- </form> -->
         </div>
       </div>
       <section
@@ -100,6 +105,7 @@
             style="
               text-align: start;
               align-items: left;
+
               min-width: 120px !important;
             "
             >Reported Date</span
@@ -127,7 +133,7 @@
           >
           <span
             class="mat-header-cell"
-            mat-sort-header="reporter_id"
+            mat-sort-header="reported_by"
             style="
               text-align: start;
               align-items: left;
@@ -139,8 +145,8 @@
         <mat-expansion-panel
           #pnlIssues
           *ngFor="let issue of local_data; let i = index"
-          (afterExpand)="selectedIssue = issue"
-          (afterCollapse)="isNewMode = false; issue.expanded = false"
+          (afterExpand)="afterExpand(issue); selectedIssue = issue"
+          (click)="$event.stopPropagation()"
         >
           <mat-expansion-panel-header class="expansion-container">
             <mat-panel-title
@@ -148,6 +154,7 @@
               style="
                 text-align: start;
                 align-items: left;
+                margin-top: 15px !important;
                 max-width: 70px !important;
                 vertical-align: top !important;
               "
@@ -165,6 +172,7 @@
               style="
                 text-align: start;
                 align-items: left;
+                margin-top: 15px !important;
                 min-width: 200px !important;
                 vertical-align: top !important; ;
               "
@@ -176,6 +184,7 @@
               style="
                 text-align: start;
                 align-items: left;
+                margin-top: 15px !important;
                 min-width: 120px !important;
                 vertical-align: top !important; ;
               "
@@ -187,6 +196,7 @@
               class="expansion-child"
               style="
                 text-align: start;
+                margin-top: -5px !important;
                 align-items: left;
                 min-width: 120px !important;
                 vertical-align: top !important; ;
@@ -194,7 +204,7 @@
             >
               <mat-form-field
                 (click)="$event.stopPropagation()"
-                style="top: -15px !important"
+                style="top: 5px !important"
               >
                 <select
                   matNativeControl
@@ -212,6 +222,7 @@
               style="
                 text-align: start;
                 align-items: left;
+                margin-top: -5px !important;
                 min-width: 120px !important;
                 vertical-align: top !important;
                 top: 0px !important ;
@@ -219,7 +230,7 @@
             >
               <mat-form-field
                 (click)="$event.stopPropagation()"
-                style="top: -15px !important"
+                style="top: 5px !important"
               >
                 <select
                   matNativeControl
@@ -237,12 +248,13 @@
               style="
                 text-align: left;
                 align-items: left;
+                margin-top: 15px !important;
                 min-width: 120px !important;
                 vertical-align: top !important;
-                top: 0px !important;
+                top: 5px !important;
               "
             >
-              {{ issue.reporter_id }}
+              {{ issue.reported_by }}
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div id="subdiv">
@@ -277,52 +289,66 @@
               >
               <textarea
                 readonly="true"
-                style="display: inline; clear: left; margin-top: 6px !important"
+                style="
+                  display: inline;
+                  clear: left;
+                  margin-top: 6px !important ;
+                  width: 90% !important;
+                "
                 cols="100"
-                rows="6"
+                rows="2"
                 >{{ issue.description }}</textarea
               >
             </div>
 
-            <div class="remaks">
+            <div class="remaks" (click)="$event.stopPropagation()">
               <div id="remarkButtons">
-                <strong>Rmarks :</strong>
+                <strong style="vertical-align: bottom; padding-left: 5px"
+                  >Rmarks :</strong
+                >
                 <mat-icon
-                  *ngIf="isSingleRemark && !isNewMode"
+                  *ngIf="!isNewMode && isSingleRemark"
                   id="btnAddRemark"
                   svgIcon="add"
                   title="add"
-                  (click)="showAddRemark(issue.id)"
+                  (click)="$event.stopPropagation()"
+                  (click)="showAddRemark(issue)"
                 ></mat-icon>
 
                 <mat-icon
-                  *ngIf="isSingleRemark && isNewMode"
+                  *ngIf="isNewMode"
                   id="btnCancelRemark"
                   svgIcon="cancel"
                   title="Cancel"
+                  (click)="$event.stopPropagation()"
                   (click)="cancelAddRemark(issue.id)"
                 ></mat-icon>
                 <mat-icon
-                  *ngIf="isSingleRemark && isNewMode"
+                  *ngIf="isNewMode"
                   id="btnSaveRemark"
                   svgIcon="save"
                   title="Save"
-                  (click)="showAddRemark(issue.id)"
+                  (click)="$event.stopPropagation()"
+                  (click)="addRemark(issue, remarkTxt)"
                 ></mat-icon>
               </div>
-
               <ul
+                (click)="$event.stopPropagation()"
+                *ngIf="issue?.expanded && issue?.remarks?.length > 0"
                 name="ulRemarks"
+                #ulRemarks
                 style="padding: 0px !important ; left: 0px !important"
+                ngDefaultControl
               >
                 <div
+                  (click)="$event.stopPropagation()"
                   style="
                     display: table;
                     padding: 0px !important ;
                     left: 0px !important;
                   "
                   #remarklst
-                  name="remarklst "
+                  name="remarklst"
                   *ngFor="
                     let r of issue.remarks;
                     let i = index;
@@ -331,11 +357,10 @@
                   "
                 >
                   <li
-                    *ngIf="
-                      isFirst && issue.expanded && isSingleRemark && isNewMode
-                    "
+                    *ngIf="isFirst && issue.expanded && isNewMode"
+                    (click)="$event.stopPropagation()"
                   >
-                    <form>
+                    <form #frmAddRemark id="frmAddRemark" name="frmAddRemark">
                       <div>
                         <img src="/assets/person-circle-outline.svg" [alt]="" />
                         <strong
@@ -348,13 +373,17 @@
                         >
 
                         <small
+                          class="data"
                           style="font-family: sans-serif; font-weight: bolder"
-                          >{{ " on " + r.created_at }}</small
+                          >{{ " on " + currentDate }}</small
                         >
 
                         <textarea
+                          (click)="$event.stopPropagation()"
                           class="remarkArea"
-                          name="txtremark"
+                          #txtNewRemark
+                          name="txtNewRemark"
+                          [(ngModel)]="remarkTxt"
                           matInput
                           placeholder="Type your remark here .."
                         ></textarea>
@@ -362,13 +391,21 @@
                     </form>
                   </li>
                   <li>
-                    <span>
-                      <img src="/assets/person-circle-outline.svg" [alt]="" />
-                      <strong>{{ r.user_id }}</strong>
-                    </span>
-                    <small>{{ " on " + r.created_at }} </small>
-                    <br />
-                    <samp> {{ r.remark }}</samp>
+                    <samp>
+                      <span>
+                        <img src="/assets/person-circle-outline.svg" [alt]="" />
+
+                        <strong *ngIf="r.user_id">
+                          {{ r?.username }}
+                        </strong>
+                        <small *ngIf="r.created_at"
+                          >{{
+                            " on " + r.created_at | date: "M/d/yy h:mm a" + " :"
+                          }}
+                        </small>
+                      </span>
+                      {{ r.remark }}</samp
+                    >
                   </li>
                 </div>
               </ul>

@@ -1,52 +1,143 @@
-<h1 mat-dialog-title>New Issue</h1>
-<form class="container" [formGroup]="issueFormGroup" action="submit">
-  <mat-form-field appearance="fill">
-    <mat-label>Issue Title</mat-label>
-    <input matInput formControlName="title">
-  </mat-form-field>
+<mat-toolbar class="caption">
+  <span>New Issue </span>
+  <span class="fill-remaining-space"></span>
+  <span class="close" (click)="close()">X</span>
+</mat-toolbar>
+<form [formGroup]="issueFormGroup" action="submit">
+  <div>
+    <div>
+      <mat-form-field appearance="fill">
+        <mat-label>system</mat-label>
+        <input matInput readonly formControlName="system" value="iFullfill" />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Issue Title</mat-label>
+        <input matInput formControlName="title" required />
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field appearance="fill">
+        <mat-label>Status</mat-label>
+        <select matNativeControl required formControlName="status">
+          <option *ngFor="let c of status" [value]="c.value">
+            {{ c.title }}
+          </option>
+        </select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Criticality</mat-label>
+        <select matNativeControl required formControlName="criticality">
+          <option *ngFor="let c of criticality" [value]="c.value">
+            {{ c.title }}
+          </option>
+        </select>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field appearance="fill">
+        <mat-label>Target Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          formControlName="target_date"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="fill" (click)="$event.stopPropagation()">
+        <mat-label>Pending With</mat-label>
+        <mat-select
+          [formControl]="usersControl"
+          multiple
+          (click)="$event.stopPropagation()"
+        >
+          <mat-select-trigger *ngIf="usersControl.value?.length > 0">
+            {{ setSelectedUsers(usersControl) }}
+            {{ usersControl.value ? usersControl.value[0]?.username : "" }}
 
-  <br>
-
-  <mat-form-field appearance="fill">
-    <mat-label>Status</mat-label>
-    <select matNativeControl required formControlName="status">
-      <option *ngFor="let c of status" [value]="c.value">
-        {{ c.title }}
-      </option>
-    </select>
-  </mat-form-field>
-
-  <br>
-
-  <mat-form-field appearance="fill">
-    <mat-label>Criticality</mat-label>
-    <select matNativeControl required formControlName="criticality">
-      <option *ngFor="let c of  criticality" [value]="c.value">
-        {{ c.title }}
-      </option>
-    </select>
-  </mat-form-field>
-
-  <br>
-
-  <mat-form-field appearance="fill">
-    <mat-label>Target Date</mat-label>
-    <input matInput [matDatepicker]="picker" formControlName="target_date">
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
-
-  <br>
-
-  <mat-form-field>
-    <mat-label>Issue Description</mat-label>
-    <textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRow="1" cdkAutosizeMaxRows="10" formControlName="description"></textarea>
-  </mat-form-field>
-
-  <br>
-
-  <button mat-raised-button color="accent" type="submit" [disabled]="!issueFormGroup.valid" (click)="createIssue()">Submit</button>
-  <button mat-stroked-button (click)="close()">Cancel</button>
+            <span
+              *ngIf="usersControl.value?.length > 1"
+              class="example-additional-selection"
+            >
+              (+{{ usersControl.value.length - 1 }}
+              {{ usersControl.value?.length === 2 ? "other" : "others" }})
+            </span>
+          </mat-select-trigger>
+          <mat-option
+            (click)="$event.stopPropagation()"
+            *ngFor="let user of users; let i = index"
+            [value]="user"
+            >{{ user.username }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div>
+    <div>
+      <mat-form-field style="width: 50%">
+        <mat-label> Description</mat-label>
+        <textarea
+          rows="5"
+          matInput
+          cdkAutosizeMinRow="1"
+          cdkAutosizeMaxRows="10"
+          formControlName="description"
+          required
+        ></textarea>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field style="width: 50%">
+        <mat-label> Remark</mat-label>
+        <textarea
+          rows="5"
+          matInput
+          cdkAutosizeMinRow="1"
+          cdkAutosizeMaxRows="10"
+          formControlName="remark"
+        ></textarea>
+      </mat-form-field>
+    </div>
+    <div class="button-row">
+      <button
+        mat-raised-button
+        color="accent"
+        type="submit"
+        [disabled]="!issueFormGroup.valid"
+        (click)="createIssue()"
+      >
+        Submit
+      </button>
+      <button mat-stroked-button (click)="close()">Cancel</button>
+    </div>
+  </div>
 </form>
 
-
+<!--
+<mat-form-field class="example-chip-list">
+  <mat-label>Favorite Fruits</mat-label>
+  <mat-chip-list #chipList aria-label="Fruit selection">
+    <mat-chip
+      *ngFor="let fruit of fruits"
+      [selectable]="selectable"
+      [removable]="removable"
+      (removed)="remove(fruit)">
+      {{fruit}}
+      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+    </mat-chip>
+    <input
+      placeholder="New fruit..."
+      #fruitInput
+      [formControl]="userCtrl"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      (matChipInputTokenEnd)="add($event)">
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+    <mat-option *ngFor="let fruit of filteredFruits | async" [value]="fruit">
+      {{fruit}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field> -->

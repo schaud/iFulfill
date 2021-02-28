@@ -7,39 +7,70 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class UsersService {
-  constructor(private http: HttpClient) {
-    this.getAllUsers();
-  }
-  private users: User[] = [];
-  private async getUsers(): Promise<Array<User>> {
+  constructor(private http: HttpClient) {}
+  // private _currentUserName: string;
+  // public get currentUserName(): string {
+  //   this.getCurrentUser()
+  //     .then((res) => {
+  //       this.currentUserName = res.username;
+  //       console.log('UsersService getCurrentUser', res);
+  //     })
+  //     .catch(() => (this._currentUserName = ''));
+
+  //   return this._currentUserName;
+  // }
+  // public set currentUserName(value: string) {
+  //   console.log('UsersService set currentUserName', value);
+  //   this._currentUserName = value;
+  // }
+
+  users: any[] = null;
+  private async getUsersRequest(): Promise<User[]> {
     return await this.http
-      .get<any>(CommonService.UsersPath)
+      .get<User[]>(CommonService.UsersPath)
       .toPromise()
-      .then((res: Response) => {
-        console.log('getAllUsers .res[ users ]', res['users']);
+      .then((res) => {
+        //console.log('getUsersRequest request : ', res['users']);
         return res['users'];
-      })
-      .catch((err) => {
-        console.log(err);
       });
-    // console.log('getAllUsers X', this.users);
+  }
+  private async getUserByIdRequest(id): Promise<User> {
+    // console.log('getUserById request : ');
+    return await this.http
+      .get<User>(`${CommonService.UsersPath}/${id}`)
+      .toPromise();
   }
 
-  async getAllUsers() {
-    await this.getUsers()
-      .then((res) => {
+  async getAllUsers(reload: boolean = false) {
+    // let obj: User[] = [];
+    if (reload) {
+      await this.getUsersRequest().then((res) => {
         this.users = res;
-      })
-      .catch((err) => {
-        console.log(err);
       });
-    console.log('getAllusers', this.users);
+      this.users.map((user) => {
+        user.username = `${user?.fname} ${user?.lname}`;
+      });
+    }
+    // console.log('getAllUsers', this.users);
+    return this.users;
   }
-  getUserById(id): User {
-    if (this.users) {
-      let u = this.users.find((i) => i.id === id);
-      console.log('getUserById', u);
-      return u;
-    } else return null;
+  async getCurrentUser(): Promise<any> {
+    return await this.findUserById('c09a4f26-41ca-4de8-986b-795956cfcc59');
+  }
+  async findUserById(id: string) {
+    let obj: any;
+    if (!this.users) {
+      await this.getAllUsers(true);
+
+      obj = this.users.find((u) => {
+        return u.id == id;
+      });
+    } else if (this.users) {
+      obj = this.users.find((u) => {
+        return u.id == id;
+      });
+    }
+    //   console.log('findUserById(id) obj', obj);
+    return obj;
   }
 }
